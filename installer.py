@@ -26,6 +26,7 @@ for file in glob.glob("version.txt"):
         remote_text = r.text.split("\n")
         remote_version = remote_text[0]
         if (remote_version != origin_version):
+            print("Versions doesn't match. Redownloading RatPoison")
             new_path = f"RatPoison-{origin_branch}/"
             pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
             if (searchDir("jdk")):
