@@ -13,9 +13,16 @@ def downloadFileWithBar(path, link):
                 f.write(chunk)
                 f.flush()
 
-for file in glob.glob("RatPoison.kt", recursive=True):
-    installed = True
-    break
+def setFolder():
+    global installed, raw_folder_name, folder_name
+    if os.path.exists("build/"):
+        for file in os.listdir("build/"):
+            if ("RatPoison" in file):
+                installed = True
+                raw_folder_name = file
+                folder_name = os.path.join("build", raw_folder_name)
+
+setFolder()
 
 def searchDir(path):
     for file in os.listdir():
@@ -26,7 +33,6 @@ def searchDir(path):
 for file in glob.glob("version.txt"):
     # Autoupdate
     with open(file) as f:
-        updated = True
         c = f.readlines()
         origin_version = c[0].replace("\n", "")
         origin_branch = c[1].replace("\n", "")
@@ -34,6 +40,7 @@ for file in glob.glob("version.txt"):
         remote_text = r.text.split("\n")
         remote_version = remote_text[0]
         if (remote_version != origin_version):
+            updated = True
             print("Versions doesn't match. Redownloading RatPoison")
             new_path = f"RatPoison-{origin_branch}/"
             pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
@@ -47,7 +54,7 @@ JDK_ZIP_NAME = "JDK.zip"
 
 def getRandomName():
     s = ""
-    for _ in range(10):
+    for _ in range(20):
         s += random.choice(string.ascii_uppercase)
     return s
 
@@ -56,30 +63,31 @@ if (not searchDir("jdk")):
     downloadFileWithBar(JDK_ZIP_NAME, JDK_LINK)
     with zipfile.ZipFile(JDK_ZIP_NAME) as zip_ref:
         zip_ref.extractall("")
+    os.remove(JDK_ZIP_NAME)
     # Set JAVA_HOME and PATH
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), "jdk-14.0.2")
     os.environ["PATH"] = os.environ["PATH"]+";"+os.path.join(os.environ["JAVA_HOME"], "bin")
 
-def searchFolderName():
-    for file in os.listdir("build/"):
-        if ("RatPoison" in file):
-            return file
-
-if (not installed and not updated):
+if (not installed or updated):
     # BUILD
     print("Building RatPoison...")
-    subprocess.run(["gradlew.bat", "RatPoison"])
-    if (input("Would you like to randomize the file name for safety? [Y/N] ") in ["y", "yes"]):
+    subprocess.check_call(["gradlew.bat", "RatPoison"])
+    if (input("Would you like to randomize the file name for safety? [Y/N] ").lower() in ["y", "yes"]):
         random_name = getRandomName()
+        setFolder()
+        for file in os.listdir(folder_name):
+            path_to_file = os.path.join(folder_name, file)
+            if (os.path.isfile(path_to_file)):
+                fileExt = os.path.splitext(file)[1]
+                os.rename(path_to_file, f"{folder_name}/{random_name}{fileExt}")
+    print("Run this script one more time to start RatPoison.")
 
 else:
     java_exe = "jdk-14.0.2/bin/java.exe"
-    raw_folder_name = searchFolderName()
-    folder_name = os.path.join("build", raw_folder_name)
     for file in os.listdir(folder_name):
         if (".jar" in file):
             jar_file = os.path.join(folder_name, file)
             os.system(f"title {raw_folder_name}")
-            subprocess.run([java_exe, "-Xmx512m", "-Xms32m", "-XX:+UseSerialGC", "-jar", jar_file])
+            subprocess.check_call([java_exe, "-Xmx512m", "-Xms32m", "-XX:+UseSerialGC", "-jar", jar_file])
 
 os.system("pause")
