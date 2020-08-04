@@ -1,0 +1,5 @@
+1.7
+new-testing
+// Required to reformat all version.txt files to format:
+// version
+// branch
