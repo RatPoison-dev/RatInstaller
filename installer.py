@@ -55,7 +55,7 @@ if (not searchDir("jdk")):
 # BUILD
 print("Building RatPoison...")
 subprocess.run(["gradlew.bat", "RatPoison"])
-if (input() in ["y", "yes"]):
+if (input("Would you like to randomize the file name for safety? [Y/N]") in ["y", "yes"]):
     random_name = getRandomName()
     for d in os.listdir("build/"):
         if ("RatPoison" in d):
