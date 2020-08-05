@@ -1,5 +1,6 @@
 import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2
 from clint.textui import progress
+from pathlib import Path
 
 installed = False
 updated = False
@@ -14,13 +15,16 @@ def downloadFileWithBar(path, link):
                 f.flush()
 
 def setFolder():
-    global installed, raw_folder_name, folder_name
+    global installed, raw_folder_name, folder_name, bat_file, jar_file
     if os.path.exists("build/"):
         for file in os.listdir("build/"):
             if ("RatPoison" in file):
                 installed = True
                 raw_folder_name = file
                 folder_name = os.path.join("build", raw_folder_name)
+                for file in os.listdir(folder_name):
+                    if (".bat" in file): bat_file = os.path.join(folder_name, file)
+                    elif (".jar" in file): jar_file = file
 
 setFolder()
 
@@ -72,6 +76,7 @@ if (not installed or updated):
     # BUILD
     print("Building RatPoison...")
     subprocess.check_call(["gradlew.bat", "RatPoison"])
+    setFolder()
     if (input("Would you like to randomize the file name for safety? [Y/N] ").lower() in ["y", "yes"]):
         random_name = getRandomName()
         setFolder()
@@ -80,14 +85,20 @@ if (not installed or updated):
             if (os.path.isfile(path_to_file)):
                 fileExt = os.path.splitext(file)[1]
                 os.rename(path_to_file, f"{folder_name}/{random_name}{fileExt}")
-    print("Run this script one more time to start RatPoison.")
+    drive = os.getcwd().replace("\\", "/").split('/')[0]+"/"
+    for path in Path(drive).rglob('java.exe'):
+        java_exe = str(path)
+        with open(bat_file, "r") as rFile:
+            prevLines = rFile.readlines()
+        prevLines[4] = f'\t\t"{java_exe}" -Xmx512m -Xms32m -XX:+UseSerialGC -jar "{jar_file}"'
+        with open(bat_file, "w") as wFile:
+            wFile.writelines(prevLines)
+        break
 
 else:
-    java_exe = "jdk-14.0.2/bin/java.exe"
     for file in os.listdir(folder_name):
-        if (".jar" in file):
-            jar_file = os.path.join(folder_name, file)
-            os.system(f"title {raw_folder_name}")
-            subprocess.check_call([java_exe, "-Xmx512m", "-Xms32m", "-XX:+UseSerialGC", "-jar", jar_file])
+        if (".bat" in file):
+            bat_file = os.path.join(folder_name, file)
+            subprocess.check_call([bat_file])
 
 os.system("pause")
