@@ -87,6 +87,7 @@ if (not installed or updated):
                 os.rename(path_to_file, f"{folder_name}/{random_name}{fileExt}")
     drive = os.getcwd().replace("\\", "/").split('/')[0]+"/"
     for path in Path(drive).rglob('java.exe'):
+        setFolder()
         java_exe = str(path)
         with open(bat_file, "r") as rFile:
             prevLines = rFile.readlines()
