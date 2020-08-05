@@ -56,6 +56,9 @@ for file in glob.glob("version.txt"):
 JDK_LINK = "https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_windows-x64_bin.zip"
 JDK_ZIP_NAME = "JDK.zip"
 
+def startCheat():
+    subprocess.run([bat_file])
+
 def getRandomName():
     s = ""
     for _ in range(20):
@@ -91,15 +94,14 @@ if (not installed or updated):
         java_exe = str(path)
         with open(bat_file, "r") as rFile:
             prevLines = rFile.readlines()
-        prevLines[4] = f'\t\t"{java_exe}" -Xmx512m -Xms32m -XX:+UseSerialGC -jar "{jar_file}"'
+        prevLines[4] = f'\t\t"{java_exe}" -Xmx512m -Xms32m -XX:+UseSerialGC -jar "{jar_file}"\n'
         with open(bat_file, "w") as wFile:
             wFile.writelines(prevLines)
         break
+    if (input("Do you want to start the cheat? [Y/N] ").lower() in ["y", "yes"]):
+        startCheat()
 
 else:
-    for file in os.listdir(folder_name):
-        if (".bat" in file):
-            bat_file = os.path.join(folder_name, file)
-            subprocess.check_call([bat_file])
+    startCheat()
 
 os.system("pause")
