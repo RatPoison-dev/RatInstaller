@@ -28,11 +28,13 @@ def setFolder():
 
 setFolder()
 
-def searchDir(path):
+def searchJDK():
     for file in os.listdir():
-        if (path in file):
+        if ("jdk" in file):
             return True
-    return False
+    jdk = os.environ.get("JAVA_HOME")
+    # why tf your jdk points to recycle bin bitch are you retarted
+    return jdk is not None and not "jre" in jdk.lower() and not "$RECYCLE.BIN" in jdk and not "1.8" in jdk.lower()
 
 for file in glob.glob("version.txt"):
     # Autoupdate
@@ -41,22 +43,26 @@ for file in glob.glob("version.txt"):
         origin_version = c[0].replace("\n", "")
         origin_branch = c[1].replace("\n", "")
         r = requests.get(f"https://raw.githubusercontent.com/TheFuckingRat/RatPoison/{origin_branch}/version.txt")
-        remote_text = r.text.split("\n")
-        remote_version = remote_text[0]
-        if (remote_version != origin_version):
-            updated = True
-            print("Versions doesn't match. Redownloading RatPoison")
-            new_path = f"RatPoison-{origin_branch}/"
-            pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
-            if (searchDir("jdk")):
-                shutil.move("jdk-14.0.2", new_path)
-            os.chdir(f"RatPoison-{origin_branch}/")
+        if (r.status_code != 404):
+            remote_text = r.text.split("\n")
+            remote_version = remote_text[0]
+            if (remote_version != origin_version):
+                updated = True
+                print("Versions doesn't match. Redownloading RatPoison")
+                new_path = f"RatPoison-{origin_branch}/"
+                pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
+                if (os.path.exists("jdk-14.0.2")):
+                    shutil.move("jdk-14.0.2", new_path)
+                os.chdir(f"RatPoison-{origin_branch}/")
+        else:
+            print("Specified branch is probably invalid.")
     break
 
 JDK_LINK = "https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_windows-x64_bin.zip"
 JDK_ZIP_NAME = "JDK.zip"
 
 def startCheat():
+    # Нет блять пошел нахуй руками запускай тупой пендос ленивый, мразь сука конченная, уёбок блять, запускай давай пидарас
     subprocess.run([bat_file])
 
 def getRandomName():
@@ -65,7 +71,7 @@ def getRandomName():
         s += random.choice(string.ascii_uppercase)
     return s
 
-if (not searchDir("jdk")):
+if (not searchJDK()):
     print("Downloading JDK...")
     downloadFileWithBar(JDK_ZIP_NAME, JDK_LINK)
     with zipfile.ZipFile(JDK_ZIP_NAME) as zip_ref:
@@ -90,14 +96,15 @@ if (not installed or updated):
                 os.rename(path_to_file, f"{folder_name}/{random_name}{fileExt}")
     drive = os.getcwd().replace("\\", "/").split('/')[0]+"/"
     for path in Path(drive).rglob('java.exe'):
-        setFolder()
-        java_exe = str(path)
-        with open(bat_file, "r") as rFile:
-            prevLines = rFile.readlines()
-        prevLines[4] = f'\t\t"{java_exe}" -Xmx512m -Xms32m -XX:+UseSerialGC -jar "{jar_file}"\n'
-        with open(bat_file, "w") as wFile:
-            wFile.writelines(prevLines)
-        break
+        if (not "$RECYCLE.BIN" in path):
+            setFolder()
+            java_exe = str(path)
+            with open(bat_file, "r") as rFile:
+                prevLines = rFile.readlines()
+            prevLines[4] = f'\t\t"{java_exe}" -Xmx512m -Xms32m -XX:+UseSerialGC -jar "{jar_file}"\n'
+            with open(bat_file, "w") as wFile:
+                wFile.writelines(prevLines)
+            break
     if (input("Do you want to start the cheat? [Y/N] ").lower() in ["y", "yes"]):
         startCheat()
 
