@@ -1,4 +1,4 @@
-import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2
+import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re
 from clint.textui import progress
 from pathlib import Path
 
@@ -34,7 +34,17 @@ def searchJDK():
             return True
     jdk = os.environ.get("JAVA_HOME")
     # why tf your jdk points to recycle bin bitch are you retarted
-    return jdk is not None and not "jre" in jdk.lower() and not "$RECYCLE.BIN" in jdk and not "1.8" in jdk.lower()
+    return jdk is not None and verifyPath(jdk)
+
+def parseJDKVersion(path):
+    try:
+        return int(re.findall(r"jdk-\d+", path.lower())[0].split("jdk-")[1])
+    except:
+        return None
+
+def verifyPath(path):
+    return not "jre" in path.lower() and parseJDKVersion(path) is not None and parseJDKVersion(path) >= 12 and not "$RECYCLE.BIN" in path
+
 
 for file in glob.glob("version.txt"):
     # Autoupdate
@@ -96,7 +106,7 @@ if (not installed or updated):
                 os.rename(path_to_file, f"{folder_name}/{random_name}{fileExt}")
     drive = os.getcwd().replace("\\", "/").split('/')[0]+"/"
     for path in Path(drive).rglob('java.exe'):
-        if (not "$RECYCLE.BIN" in str(path)):
+        if (verifyPath(str(path))):
             setFolder()
             java_exe = str(path)
             with open(bat_file, "r") as rFile:
