@@ -1,4 +1,4 @@
-import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re
+import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, psutil
 from clint.textui import progress
 from pathlib import Path
 
@@ -13,6 +13,11 @@ def downloadFileWithBar(path, link):
             if chunk:
                 f.write(chunk)
                 f.flush()
+
+def killJDKs():
+    for p in psutil.process_iter():
+        if ("jdk" in p.name.lower()):
+            p.kill()
 
 def setFolder():
     global installed, raw_folder_name, folder_name, bat_file, jar_file
@@ -95,6 +100,7 @@ if (not installed or updated):
     # BUILD
     print("Building RatPoison...")
     subprocess.check_call(["gradlew.bat", "RatPoison"])
+    killJDKs()
     setFolder()
     if (input("Would you like to randomize the file name for safety? [Y/N] ").lower() in ["y", "yes"]):
         random_name = getRandomName()
