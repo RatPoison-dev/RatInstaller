@@ -68,7 +68,7 @@ for file in glob.glob("version.txt"):
                 pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
                 if (os.path.exists("jdk-14.0.2")):
                     shutil.move("jdk-14.0.2", new_path)
-                os.chdir(f"RatPoison-{origin_branch}/")
+                os.chdir(new_path)
         else:
             print("Specified branch is probably invalid.")
     break
