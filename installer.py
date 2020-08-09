@@ -4,6 +4,7 @@ from pathlib import Path
 
 installed = False
 updated = False
+createdTask = False
 
 def downloadFileWithBar(path, link):
     r = requests.get(link, stream=True)
@@ -16,7 +17,7 @@ def downloadFileWithBar(path, link):
 
 def killJDKs():
     for p in psutil.process_iter():
-        if ("jdk" in p.name.lower()):
+        if ("jdk" in p.name().lower()):
             p.kill()
 
 def setFolder():
@@ -51,6 +52,10 @@ def verifyPath(path):
     return not "jre" in path.lower() and parseJDKVersion(path) is not None and parseJDKVersion(path) >= 12 and not "$RECYCLE.BIN" in path
 
 
+def migrateFolder(folder):
+    for f in os.listdir(folder):
+        shutil.move(os.path.join(folder, f), os.path.join(new_path, folder, f))
+
 for file in glob.glob("version.txt"):
     # Autoupdate
     with open(file) as f:
@@ -68,7 +73,18 @@ for file in glob.glob("version.txt"):
                 pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
                 if (os.path.exists("jdk-14.0.2")):
                     shutil.move("jdk-14.0.2", new_path)
+
+                print("[Migration] Moving CFGS")
+                migrateFolder("settings/CFGS")
+                print("[Migration] Moving HitSounds")
+                migrateFolder("settings/hitsounds")
+                print("[Migration] Moving NadeHelpers")
+                migrateFolder("settings/NadeHelper")
                 os.chdir(new_path)
+                i = input("Do you want to delete previos cheat folder after building? [Y/N] ").lower()
+                if (i.lower() in ["y", "yes"]):
+                    createdTask = True
+
         else:
             print("Specified branch is probably invalid.")
     break
@@ -110,7 +126,12 @@ if (not installed or updated):
             if (os.path.isfile(path_to_file)):
                 fileExt = os.path.splitext(file)[1]
                 os.rename(path_to_file, f"{folder_name}/{random_name}{fileExt}")
-    drive = os.getcwd().replace("\\", "/").split('/')[0]+"/"
+    #Fuck this
+    #if (createdTask):
+    #    curPath = os.getcwd()
+    #    shutil.move(curPath, "../")
+    #    setFolder()
+    drive = os.path.splitdrive(os.getcwd())[0]+"/"
     for path in Path(drive).rglob('java.exe'):
         if (verifyPath(str(path))):
             setFolder()
