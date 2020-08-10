@@ -69,7 +69,7 @@ for file in glob.glob("version.txt"):
             if (remote_version != origin_version):
                 updated = True
                 print("Versions doesn't match. Redownloading RatPoison")
-                new_path = f"RatPoison-{origin_branch}/"
+                new_path = f"RatPoison-{origin_branch}"
                 pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
                 if (os.path.exists("jdk-14.0.2")):
                     shutil.move("jdk-14.0.2", new_path)
@@ -126,11 +126,16 @@ if (not installed or updated):
             if (os.path.isfile(path_to_file)):
                 fileExt = os.path.splitext(file)[1]
                 os.rename(path_to_file, f"{folder_name}/{random_name}{fileExt}")
-    #Fuck this
-    #if (createdTask):
-    #    curPath = os.getcwd()
-    #    shutil.move(curPath, "../")
-    #    setFolder()
+    if (createdTask):
+        # Delete folder above 
+        for file in os.listdir("../"):
+            filePath = os.path.join("..", file)
+            if (not new_path in file):
+                if (os.path.isdir(filePath)):
+                    shutil.rmtree(filePath, ignore_errors=True)
+                else:
+                    os.remove(filePath)
+
     drive = os.path.splitdrive(os.getcwd())[0]+"/"
     for path in Path(drive).rglob('java.exe'):
         if (verifyPath(str(path))):
