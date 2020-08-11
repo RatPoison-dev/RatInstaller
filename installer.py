@@ -135,6 +135,12 @@ if (not installed or updated):
                     shutil.rmtree(filePath, ignore_errors=True)
                 else:
                     os.remove(filePath)
+        for file in os.listdir(os.getcwd()):
+            if (not ".git" in file):
+                shutil.move(file, "../")
+        os.chdir("../")
+        setFolder()
+        shutil.rmtree(new_path, ignore_errors=True)
 
     drive = os.path.splitdrive(os.getcwd())[0]+"/"
     for path in Path(drive).rglob('java.exe'):
