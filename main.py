@@ -1,8 +1,9 @@
 import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, psutil
 from clint.textui import progress
 from pathlib import Path
+import __main__
 
-executing = os.path.splitext(os.path.basename(__file__))[0]
+executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
 
 installed = False
 updated = False
