@@ -1,4 +1,4 @@
-import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, psutil
+import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, utils
 from clint.textui import progress
 from pathlib import Path
 import __main__
@@ -8,20 +8,9 @@ executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
 installed = False
 updated = False
 createdTask = False
-
-def downloadFileWithBar(path, link):
-    r = requests.get(link, stream=True)
-    with open(path, 'wb') as f:
-        total_length = int(r.headers.get('content-length'))
-        for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1): 
-            if chunk:
-                f.write(chunk)
-                f.flush()
-
-def killJDKs():
-    for p in psutil.process_iter():
-        if ("jdk" in p.name().lower()):
-            p.kill()
+YES = ["y", "yes", "YES", "Y"]
+JDK_LINK = "https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_windows-x64_bin.zip"
+JDK_ZIP_NAME = "JDK.zip"
 
 def setFolder():
     global installed, raw_folder_name, folder_name, bat_file, jar_file
@@ -37,27 +26,12 @@ def setFolder():
 
 setFolder()
 
-def searchJDK():
-    for file in os.listdir():
-        if ("jdk" in file):
-            return True
-    jdk = os.environ.get("JAVA_HOME")
-    # why tf your jdk points to recycle bin bitch are you retarted
-    return jdk is not None and verifyPath(jdk)
-
-def parseJDKVersion(path):
-    try:
-        return int(re.findall(r"jdk-\d+", path.lower())[0].split("jdk-")[1])
-    except:
-        return None
-
-def verifyPath(path):
-    return not "jre" in path.lower() and parseJDKVersion(path) is not None and parseJDKVersion(path) >= 12 and not "$RECYCLE.BIN" in path
-
 
 def migrateFolder(folder):
     for f in os.listdir(folder):
-        shutil.move(os.path.join(folder, f), os.path.join(new_path, folder, f))
+        prev_path = os.path.join(folder, f)
+        if (os.path.isfile(prev_path)):
+            shutil.move(prev_path, os.path.join(new_path, folder, f))
 
 for file in glob.glob("version.txt"):
     # Autoupdate
@@ -73,7 +47,7 @@ for file in glob.glob("version.txt"):
                 print("Versions doesn't match. Redownloading RatPoison")
                 new_path = f"RatPoison-{origin_branch}"
                 if (os.path.exists(new_path)):
-                    if (input(f"Folder: {new_path} found. Would you like to delete it? ").lower() in ["y", "yes"]):
+                    if (input(f"Folder: {new_path} found. Would you like to delete it? ").lower() in YES):
                         shutil.rmtree(new_path, ignore_errors=True)
                 updated = True
                 pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
@@ -86,30 +60,23 @@ for file in glob.glob("version.txt"):
                 migrateFolder("settings/hitsounds")
                 print("[Migration] Moving NadeHelpers")
                 migrateFolder("settings/NadeHelper")
+                print("[Migration] Moving default settings")
+                migrateFolder("settings/")
                 os.chdir(new_path)
                 i = input("Do you want to delete previos cheat folder after building? [Y/N] ").lower()
-                if (i.lower() in ["y", "yes"]):
+                if (i.lower() in YES):
                     createdTask = True
 
         else:
             print("Specified branch is probably invalid.")
     break
 
-JDK_LINK = "https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_windows-x64_bin.zip"
-JDK_ZIP_NAME = "JDK.zip"
-
 def startCheat():
     subprocess.run([bat_file])
 
-def getRandomName():
-    s = ""
-    for _ in range(20):
-        s += random.choice(string.ascii_uppercase)
-    return s
-
-if (not searchJDK()):
+if (not utils.searchJDK()):
     print("Downloading JDK...")
-    downloadFileWithBar(JDK_ZIP_NAME, JDK_LINK)
+    utils.downloadFileWithBar(JDK_ZIP_NAME, JDK_LINK)
     with zipfile.ZipFile(JDK_ZIP_NAME) as zip_ref:
         zip_ref.extractall("")
     os.remove(JDK_ZIP_NAME)
@@ -121,10 +88,10 @@ if (not installed or updated):
     # BUILD
     print("Building RatPoison...")
     subprocess.check_call(["gradlew.bat", "RatPoison"])
-    killJDKs()
+    utils.killJDKs()
     setFolder()
-    if (input("Would you like to randomize the file name for safety? [Y/N] ").lower() in ["y", "yes"]):
-        random_name = getRandomName()
+    if (input("Would you like to randomize the file name for safety? [Y/N] ").lower() in YES):
+        random_name = utils.getRandomName()
         setFolder()
         for file in os.listdir(folder_name):
             path_to_file = os.path.join(folder_name, file)
@@ -147,21 +114,27 @@ if (not installed or updated):
         setFolder()
         shutil.rmtree(new_path, ignore_errors=True)
 
+    setFolder()
+    with open(bat_file, "r") as rFile:
+        prevLines = rFile.readlines()
+    prevLines[4] = f"{' '.join(prevLines[4].split(' ')[:-2])} \"{jar_file}\""
+    with open(bat_file, "w") as wFile:
+        wFile.writelines(prevLines)
+
     drive = os.path.splitdrive(os.getcwd())[0]+"/"
     for path in Path(drive).rglob('java.exe'):
-        if (verifyPath(str(path))):
+        if (utils.verifyPath(str(path))):
             setFolder()
             java_exe = str(path)
             with open(bat_file, "r") as rFile:
                 prevLines = rFile.readlines()
-            prevLines[4] = f'\t\t"{java_exe}" -Xmx512m -Xms32m -XX:+UseSerialGC -jar "{jar_file}"\n'
+            prevLines[4] = prevLines[4].replace("java", f"\"{java_exe}\"", 1)
             with open(bat_file, "w") as wFile:
                 wFile.writelines(prevLines)
             break
-    if (input("Do you want to start the cheat? [Y/N] ").lower() in ["y", "yes"]):
+    if (input("Do you want to start the cheat? [Y/N] ").lower() in YES):
         startCheat()
 
 else:
     startCheat()
 
-os.system("pause")
