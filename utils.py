@@ -30,9 +30,13 @@ def killJDKs():
         if ("jdk" in p.name().lower()):
             p.kill()
 
+def setJavaHome(path):
+    os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
+
 def searchJDK():
     for file in os.listdir():
         if ("jdk" in file):
+            setJavaHome(file)
             return True
     jdk = os.environ.get("JAVA_HOME")
     # why tf your jdk points to recycle bin bitch are you retarted

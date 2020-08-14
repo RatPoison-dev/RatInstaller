@@ -46,10 +46,10 @@ for file in glob.glob("version.txt"):
             remote_text = r.text.split("\n")
             remote_version = remote_text[0]
             if (remote_version != origin_version):
-                print("Versions doesn't match. Redownloading RatPoison")
+                print("Versions don't match. Redownloading RatPoison")
                 new_path = f"RatPoison-{origin_branch}"
                 if (os.path.exists(new_path)):
-                    if (input(f"Folder: {new_path} found. Would you like to delete it? ").lower() in YES):
+                    if (input(f"Folder: {new_path} found. Would you like to delete it? [Y/N] ").lower() in YES):
                         shutil.rmtree(new_path, ignore_errors=True)
                 updated = True
                 pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
@@ -84,7 +84,7 @@ if (not utils.searchJDK() or settings["force_install_jdk"] == True):
         zip_ref.extractall("")
     os.remove(JDK_ZIP_NAME)
     # Set JAVA_HOME and PATH
-    os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), "jdk-14.0.2")
+    utils.setJavaHome("jdk-14.0.2")
     os.environ["PATH"] = os.environ["PATH"]+";"+os.path.join(os.environ["JAVA_HOME"], "bin")
 
 if (not installed or updated):
