@@ -1,7 +1,9 @@
-import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, utils
+import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, utils, settingsTools
 from clint.textui import progress
 from pathlib import Path
 import __main__
+
+settings = settingsTools.loadSettings()
 
 executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
 
@@ -51,6 +53,7 @@ for file in glob.glob("version.txt"):
                         shutil.rmtree(new_path, ignore_errors=True)
                 updated = True
                 pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
+                utils.killJDKs()
                 if (os.path.exists("jdk-14.0.2")):
                     shutil.move("jdk-14.0.2", new_path)
 
@@ -63,7 +66,7 @@ for file in glob.glob("version.txt"):
                 print("[Migration] Moving default settings")
                 migrateFolder("settings/")
                 os.chdir(new_path)
-                i = input("Do you want to delete previos cheat folder after building? [Y/N] ").lower()
+                i = input("Do you want to delete previous cheat folder after building? [Y/N] ").lower()
                 if (i.lower() in YES):
                     createdTask = True
 
@@ -74,7 +77,7 @@ for file in glob.glob("version.txt"):
 def startCheat():
     subprocess.run([bat_file])
 
-if (not utils.searchJDK()):
+if (not utils.searchJDK() or settings["force_install_jdk"] == True):
     print("Downloading JDK...")
     utils.downloadFileWithBar(JDK_ZIP_NAME, JDK_LINK)
     with zipfile.ZipFile(JDK_ZIP_NAME) as zip_ref:
@@ -117,7 +120,7 @@ if (not installed or updated):
     setFolder()
     with open(bat_file, "r") as rFile:
         prevLines = rFile.readlines()
-    prevLines[4] = f"{' '.join(prevLines[4].split(' ')[:-2])} \"{jar_file}\""
+    prevLines[4] = f"{' '.join(prevLines[4].split(' ')[:-3])} \"{jar_file}\"\n"
     with open(bat_file, "w") as wFile:
         wFile.writelines(prevLines)
 
