@@ -1,4 +1,4 @@
-import requests, re, random, string, psutil, os
+import requests, re, random, string, psutil, os, sys
 from clint.textui import progress
 
 def downloadFileWithBar(path, link):

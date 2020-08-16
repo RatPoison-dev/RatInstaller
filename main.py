@@ -1,4 +1,4 @@
-import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, utils, settingsTools
+import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, utils, settingsTools, winver
 from clint.textui import progress
 from pathlib import Path
 import __main__
@@ -6,6 +6,8 @@ import __main__
 settings = settingsTools.loadSettings()
 
 executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
+
+winver.detectWin()
 
 installed = False
 updated = False
