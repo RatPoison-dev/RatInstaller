@@ -48,7 +48,7 @@ for file in glob.glob("version.txt"):
             remote_text = r.text.split("\n")
             remote_version = remote_text[0]
             if (remote_version != origin_version):
-                print("Versions don't match. Redownloading RatPoison")
+                print(f"Versions don't match. Redownloading RatPoison\nOld version: {origin_version}, new version: {remote_version}")
                 new_path = f"RatPoison-{origin_branch}"
                 if (os.path.exists(new_path)):
                     if (input(f"Folder: {new_path} found. Would you like to delete it? [Y/N] ").lower() in YES):

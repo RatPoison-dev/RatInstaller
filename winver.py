@@ -13,4 +13,4 @@ def get_winver():
 
 def detectWin():
     if (get_winver() != WIN_10):
-        print("[WARNING] Detected windows version is not Windows 10. The overlay only works on Windows 10, it doesn't turn transparent on other windows versions.")
+        print("[WARNING] Your operating system is not officially supported by RatPoison. You could experience various bugs that will never be fixed. Proceed with caution.")
