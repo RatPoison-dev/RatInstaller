@@ -1,4 +1,5 @@
-import requests, re, random, string, psutil, os, sys
+import requests, re, random, string, psutil, os, sys, subprocess
+from pathlib import Path
 from clint.textui import progress
 
 def downloadFileWithBar(path, link):
@@ -25,10 +26,19 @@ def getRandomName():
         s += random.choice(string.ascii_uppercase)
     return s
 
+def searchFile(file):
+    pathToSearch = os.environ["JAVA_HOME"] if os.environ.get("JAVA_HOME") is not None and verifyPath(os.environ["JAVA_HOME"]) else os.path.splitdrive(os.getcwd())[0]+"/"
+    return Path(pathToSearch).rglob(file)
+
 def killJDKs():
-    for p in psutil.process_iter():
-        if ("jdk" in p.name().lower()):
-            p.kill()
+    for path in searchFile("jps.exe"):
+        strPath = str(path)
+        processes = [int(x) for x in subprocess.getoutput(f"\"{strPath}\" -q").split("\n")]
+        for process in processes:
+            try:
+                os.kill(process, 0)
+            except:
+                pass
 
 def setJavaHome(path):
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)

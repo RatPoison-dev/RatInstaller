@@ -5,6 +5,8 @@ import __main__
 
 settings = settingsTools.loadSettings()
 
+utils.killJDKs()
+
 executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
 
 winver.detectWin()
@@ -33,9 +35,9 @@ setFolder()
 
 def migrateFolder(folder):
     for f in os.listdir(folder):
-        prev_path = os.path.join(folder, f)
+        prev_path = f"{folder}/{f}"
         if (os.path.isfile(prev_path)):
-            shutil.move(prev_path, os.path.join(new_path, folder, f))
+            shutil.move(prev_path, f"{new_path}/{folder}/{f}")
 
 for file in glob.glob("version.txt"):
     # Autoupdate
@@ -47,7 +49,7 @@ for file in glob.glob("version.txt"):
         if (r.status_code != 404):
             remote_text = r.text.split("\n")
             remote_version = remote_text[0]
-            if (remote_version != origin_version):
+            if (remote_version != origin_version and (input("New version is available, we highly recommend having your cheat up to date. Do you want to update your cheat now? [Y/N] ") in YES or settings["force_cheat_update"])):
                 print(f"Cheat is outdated, downloading new update.\nOld version: {origin_version}, new version: {remote_version}")
                 new_path = f"RatPoison-{origin_branch}"
                 if (os.path.exists(new_path)):
@@ -128,7 +130,7 @@ if (not installed or updated):
 
 
     pathToSearch = os.environ["JAVA_HOME"] if os.environ.get("JAVA_HOME") is not None and utils.verifyPath(os.environ["JAVA_HOME"]) else os.path.splitdrive(os.getcwd())[0]+"/"
-    for path in Path(pathToSearch).rglob('java.exe'):
+    for path in utils.searchFile("java.exe"):
         if (utils.verifyPath(str(path))):
             setFolder()
             java_exe = str(path)

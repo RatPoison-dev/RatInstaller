@@ -1,4 +1,5 @@
-import traceback, os, utils, atexit
+import traceback, os, utils, atexit, settingsTools
+settings = settingsTools.loadSettings()
 def onexit():
     utils.killJDKs()
 atexit.register(onexit)
@@ -8,6 +9,7 @@ try:
 except BaseException:
     print("Some exception occured, please report in discord (https://discord.gg/xkTteTM):")
     print("----CUT HERE----")
+    print(f"Installer settings: {settings}\n\n")
     traceback.print_exc()
     utils.killJDKs()
 
