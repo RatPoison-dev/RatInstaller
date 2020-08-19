@@ -5,8 +5,6 @@ import __main__
 
 settings = settingsTools.loadSettings()
 
-utils.killJDKs()
-
 executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
 
 winver.detectWin()
