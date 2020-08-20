@@ -39,6 +39,7 @@ def killJDKs():
                 os.kill(process, 0)
             except:
                 pass
+        break
 
 def setJavaHome(path):
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
