@@ -1,0 +1,20 @@
+{
+    "YES": ["y", "yes", "д", "да"],
+    "YES_OR_NO": "[ДА/НЕТ]",
+    "DOWNLOADING_NEW_VERSION": "Происходит обновление.\nПредыдущая версия: !origin_version, новая версия: !remote_version",
+    "NEW_VERSION_AVAILABLE_INPUT": "Найдено обновление. Желаете обновить чит?",
+    "FOLDER_ALREADY_EXIST_INPUT": "Папка !new_path уже существует. Желаете удалить ее?",
+    "FOLDER_DELETED": "Папка успешно удалена. Продолжаем загрузку...",
+    "DOWNLOADING_FINISHED": "Загрузка завершена.",
+    "MOVING_CFGS": "[Миграция] Переносим папку CFGS",
+    "MOVING_HITSOUNDS": "[Миграция] Переносим папку HitSounds",
+    "MOVING_NADEHELPERS": "[Миграция] Переносим папку NadeHelpers",
+    "MOVING_DEFAULT_SETTINGS": "[Миграция] Переносим стандартые настройки",
+    "DELETE_FOLDER_AFTER_BUILDING_INPUT": "Желаете удалить предыдущую папку чита после компиляции?",
+    "DOWNLOADING_JDK": "Загрузка JDK...",
+    "BUILDING": "Компиляция...",
+    "RANDOMIZE_FILE_NAMES_INPUT": "Желаете рандомизировать имена файлов для большей безопасности?",
+    "START_CHEAT_INPUT": "Желаете запустить чит?",
+    "DOWNLOADING_REPO_KEEP_ALIVE": "Загружаем репозиторий.. Скорость загрузки: !speed Мбпс ↓",
+    "OUTDATED_WINVER_WARNING": "[ПРЕДУПРЕЖДЕНИЕ] Ваша операционная система официально не поддерживается. Вы можете столкнуться с различными ошибками, с исправлением которых мы не сможем вам помочь. Действуйте на свой страх и риск."
+}

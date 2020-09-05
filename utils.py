@@ -1,8 +1,9 @@
-import requests, re, random, string, psutil, os, sys, subprocess, stat, threading, time, pyspeedtest
+import requests, re, random, string, psutil, os, sys, subprocess, stat, threading, time, pyspeedtest, locales
 from pathlib import Path
 from clint.textui import progress
 
 sendKeepAliveMessage = False
+locales = locales.Locales()
 
 def downloadFileWithBar(path, link):
     r = requests.get(link, stream=True)
@@ -52,9 +53,9 @@ def setJavaHome(path):
 
 def sendKeepAlive():
     st = pyspeedtest.SpeedTest("google.com")
-    speed = st.download()
+    speed = st.download()/1024/1024
     while sendKeepAliveMessage:
-        print(f"Downloading git repo.. Download speed: {speed} Kbps ↓")
+        locales.advPrint("DOWNLOADING_REPO_KEEP_ALIVE", globals={"speed":speed})
         time.sleep(5)
 
 def startKeepAliveThread():

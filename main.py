@@ -1,9 +1,11 @@
-import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, utils, settingsTools, winver
+import subprocess, string, random, requests, zipfile, os, glob, shutil, pygit2, re, utils, settingsTools, winver, locales
 from clint.textui import progress
 from pathlib import Path
 import __main__
 
 settings = settingsTools.loadSettings()
+
+locales = locales.Locales()
 
 executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
 
@@ -12,7 +14,7 @@ winver.detectWin()
 installed = False
 updated = False
 createdTask = False
-YES = ["y", "yes", "YES", "Y"]
+YES = locales.YES
 JDK_LINK = "https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_windows-x64_bin.zip"
 JDK_ZIP_NAME = "JDK.zip"
 
@@ -44,49 +46,50 @@ for file in glob.glob("version.txt"):
         origin_version = c[0].replace("\n", "")
         origin_branch = c[1].replace("\n", "")
         r = requests.get(f"https://raw.githubusercontent.com/TheFuckingRat/RatPoison/{origin_branch}/version.txt")
-        if (r.status_code != 404):
-            remote_text = r.text.split("\n")
-            remote_version = remote_text[0]
-            if (remote_version != origin_version and (input("New version is available, we highly recommend having your cheat up to date. Do you want to update your cheat now? [Y/N] ") in YES or settings["force_cheat_update"])):
-                print(f"Cheat is outdated, downloading new update.\nOld version: {origin_version}, new version: {remote_version}")
-                new_path = f"RatPoison-{origin_branch}"
-                if (os.path.exists(new_path)):
-                    if (input(f"Folder: {new_path} found. Would you like to delete it? [Y/N] ").lower() in YES):
-                        for file in os.listdir(new_path):
-                            subprocess.getoutput(f"attrib -H \"{new_path}/{file}\"")
-                        shutil.rmtree(new_path, onerror=utils.on_rm_error)
-                    print("Folder deleted successfully. Downloading...")
-                updated = True
-                utils.startKeepAliveThread()
-                pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
-                print("Downloading finished.")
-                utils.sendKeepAliveMessage = False
-                utils.killJDKs()
-                if (os.path.exists("jdk-14.0.2")):
-                    shutil.move("jdk-14.0.2", new_path)
-
-                print("[Migration] Moving CFGS")
-                migrateFolder("settings/CFGS")
-                print("[Migration] Moving HitSounds")
-                migrateFolder("settings/hitsounds")
-                print("[Migration] Moving NadeHelpers")
-                migrateFolder("settings/NadeHelper")
-                print("[Migration] Moving default settings")
-                migrateFolder("settings/")
-                os.chdir(new_path)
-                i = input("Do you want to delete previous cheat folder after building? [Y/N] ").lower()
-                if (i.lower() in YES):
-                    createdTask = True
-
-        else:
-            print("Specified branch is probably invalid.")
+        if (r.status_code == 404):
+            break
+        remote_text = r.text.split("\n")
+        remote_version = remote_text[0]
+        if (remote_version == origin_version):
+            break
+        shouldUpdate = settings["force_cheat_update"] or (locales.advInput("NEW_VERSION_AVAILABLE_INPUT") in YES)
+        if (not shouldUpdate):
+            break
+        locales.advPrint("DOWNLOADING_NEW_VERSION", globals={"origin_version": origin_version, "remote_version": remote_version})
+        new_path = f"RatPoison-{origin_branch}"
+        if (os.path.exists(new_path)):
+            if (locales.advInput("FOLDER_ALREADY_EXIST_INPUT", {"new_path": new_path}) in YES):
+                for file in os.listdir(new_path):
+                    subprocess.getoutput(f"attrib -H \"{new_path}/{file}\"")
+                shutil.rmtree(new_path, onerror=utils.on_rm_error)
+            locales.advPrint("FOLDER_DELETED")
+        updated = True
+        utils.startKeepAliveThread()
+        pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
+        locales.advPrint("DOWNLOADING_FINISHED")
+        utils.sendKeepAliveMessage = False
+        utils.killJDKs()
+        if (os.path.exists("jdk-14.0.2")):
+            shutil.move("jdk-14.0.2", new_path)
+        locales.advPrint("MOVING_CFGS")
+        migrateFolder("settings/CFGS")
+        locales.advPrint("MOVING_HITSOUNDS")
+        migrateFolder("settings/hitsounds")
+        locales.advPrint("MOVING_NADEHELPERS")
+        migrateFolder("settings/NadeHelper")
+        locales.advPrint("MOVING_DEFAULT_SETTINGS")
+        migrateFolder("settings/")
+        os.chdir(new_path)
+        i = locales.advInput("DELETE_FOLDER_AFTER_BUILDING_INPUT")
+        if (i.lower() in YES):
+            createdTask = True
     break
 
 def startCheat():
     subprocess.run([bat_file])
 
 if (not utils.searchJDK() or settings["force_install_jdk"] == True):
-    print("Downloading JDK...")
+    locales.advPrint("DOWNLOADING_JDK")
     utils.downloadFileWithBar(JDK_ZIP_NAME, JDK_LINK)
     with zipfile.ZipFile(JDK_ZIP_NAME) as zip_ref:
         zip_ref.extractall("")
@@ -97,11 +100,11 @@ if (not utils.searchJDK() or settings["force_install_jdk"] == True):
 
 if (not installed or updated):
     # BUILD
-    print("Building RatPoison...")
+    locales.advPrint("BUILDING")
     subprocess.check_call(["gradlew.bat", "RatPoison"])
     utils.killJDKs()
     setFolder()
-    if (input("Would you like to randomize the file name for safety? [Y/N] ").lower() in YES):
+    if (locales.advInput("RANDOMIZE_FILE_NAMES_INPUT") in YES):
         random_name = utils.getRandomName()
         setFolder()
         for file in os.listdir(folder_name):
@@ -144,7 +147,7 @@ if (not installed or updated):
             with open(bat_file, "w") as wFile:
                 wFile.writelines(prevLines)
             break
-    if (input("Do you want to start the cheat? [Y/N] ").lower() in YES):
+    if (locales.advInput("START_CHEAT_INPUT") in YES):
         startCheat()
 
 else:

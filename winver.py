@@ -1,5 +1,7 @@
-import sys, re
+import sys, re, locales
 WIN_10 = (10, 0, 0)
+
+locales = locales.Locales()
 
 
 def get_winver():
@@ -13,4 +15,4 @@ def get_winver():
 
 def detectWin():
     if (get_winver() != WIN_10):
-        print("[WARNING] Your operating system is not officially supported by RatPoison. You could experience various bugs that will never be fixed. Proceed with caution.")
+        locales.advPrint("OUTDATED_WINVER_WARNING")
