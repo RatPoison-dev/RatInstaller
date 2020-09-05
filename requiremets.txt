@@ -3,3 +3,4 @@ requests>=2.23.0
 pygit2==1.2.1
 PyInstaller>=3.6
 psutil>=5.7.2
+pyspeedtest==1.2.7
