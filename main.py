@@ -52,9 +52,15 @@ for file in glob.glob("version.txt"):
                 new_path = f"RatPoison-{origin_branch}"
                 if (os.path.exists(new_path)):
                     if (input(f"Folder: {new_path} found. Would you like to delete it? [Y/N] ").lower() in YES):
-                        shutil.rmtree(new_path, ignore_errors=True)
+                        for file in os.listdir(new_path):
+                            subprocess.getoutput(f"attrib -H \"{new_path}/{file}\"")
+                        shutil.rmtree(new_path, onerror=utils.on_rm_error)
+                    print("Folder deleted successfully. Downloading...")
                 updated = True
+                utils.startKeepAliveThread()
                 pygit2.clone_repository(f"https://github.com/TheFuckingRat/RatPoison.git", new_path, checkout_branch=origin_branch)
+                print("Downloading finished.")
+                utils.sendKeepAliveMessage = False
                 utils.killJDKs()
                 if (os.path.exists("jdk-14.0.2")):
                     shutil.move("jdk-14.0.2", new_path)

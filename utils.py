@@ -1,6 +1,8 @@
-import requests, re, random, string, psutil, os, sys, subprocess
+import requests, re, random, string, psutil, os, sys, subprocess, stat, threading, time, pyspeedtest
 from pathlib import Path
 from clint.textui import progress
+
+sendKeepAliveMessage = False
 
 def downloadFileWithBar(path, link):
     r = requests.get(link, stream=True)
@@ -10,6 +12,10 @@ def downloadFileWithBar(path, link):
             if chunk:
                 f.write(chunk)
                 f.flush()
+
+def on_rm_error(func, path, exc_info):
+    os.chmod(path, stat.S_IWRITE)
+    os.unlink(path)
 
 def parseJDKVersion(path):
     try:
@@ -43,6 +49,18 @@ def killJDKs():
 
 def setJavaHome(path):
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
+
+def sendKeepAlive():
+    st = pyspeedtest.SpeedTest("google.com")
+    speed = st.download()
+    while sendKeepAliveMessage:
+        print(f"Downloading git repo.. Download speed: {speed} Kbps ↓")
+        time.sleep(5)
+
+def startKeepAliveThread():
+    global sendKeepAliveMessage
+    sendKeepAliveMessage = True
+    threading.Thread(target=sendKeepAlive, name="Keep-Alive").start()
 
 def searchJDK():
     for file in os.listdir():
