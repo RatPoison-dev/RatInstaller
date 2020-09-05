@@ -53,8 +53,8 @@ def setJavaHome(path):
 
 def sendKeepAlive():
     st = pyspeedtest.SpeedTest("google.com")
-    speed = st.download()/1024/1024
     while sendKeepAliveMessage:
+        speed = "{:.3f}".format(st.download()/1024/1024)
         locales.advPrint("DOWNLOADING_REPO_KEEP_ALIVE", globals={"speed":speed})
         time.sleep(5)
 
