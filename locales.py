@@ -23,7 +23,7 @@ class Locales(object):
         } 
     def __init__(self):
         self.default_locale = locale.getdefaultlocale()[0]
-        r = requests.get(f"https://raw.githubusercontent.com/retart1337/RatInstaller/locales/locale_{self.default_locale}.json")
+        r = requests.get(f"https://raw.githubusercontent.com/retart1337/RatInstaller/master/locales/locale_{self.default_locale}.json")
         if r.status_code == 404: self.init_default_locales()
         else: self.dict = r.json()
     def advPrint(self, message, *args, globals={}, **kwargs):
