@@ -32,13 +32,6 @@ def setFolder():
 
 setFolder()
 
-
-def migrateFolder(folder):
-    for f in os.listdir(folder):
-        prev_path = f"{folder}/{f}"
-        if (os.path.isfile(prev_path)):
-            shutil.move(prev_path, f"{new_path}/{folder}/{f}")
-
 for file in glob.glob("version.txt"):
     # Autoupdate
     with open(file) as f:
@@ -72,13 +65,8 @@ for file in glob.glob("version.txt"):
         if (os.path.exists("jdk-14.0.2")):
             shutil.move("jdk-14.0.2", new_path)
         locales.advPrint("MOVING_CFGS")
-        migrateFolder("settings/CFGS")
-        locales.advPrint("MOVING_HITSOUNDS")
-        migrateFolder("settings/hitsounds")
-        locales.advPrint("MOVING_NADEHELPERS")
-        migrateFolder("settings/NadeHelper")
-        locales.advPrint("MOVING_DEFAULT_SETTINGS")
-        migrateFolder("settings/")
+        shutil.rmtree(f"{new_path}/settings")
+        shutil.move("settings", f"{new_path}/settings")
         os.chdir(new_path)
         i = locales.advInput("DELETE_FOLDER_AFTER_BUILDING_INPUT")
         if (i.lower() in YES):
