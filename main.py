@@ -66,7 +66,7 @@ for file in glob.glob("version.txt"):
             shutil.move("jdk-14.0.2", new_path)
         locales.advPrint("MOVING_CFGS")
         shutil.rmtree(f"{new_path}/settings")
-        shutil.move("settings", f"{new_path}/settings")
+        shutil.move("settings/", f"{new_path}/settings")
         os.chdir(new_path)
         i = locales.advInput("DELETE_FOLDER_AFTER_BUILDING_INPUT")
         if (i.lower() in YES):
