@@ -15,8 +15,12 @@ def downloadFileWithBar(path, link):
                 f.flush()
 
 def on_rm_error(func, path, exc_info):
-    os.chmod(path, stat.S_IWRITE)
-    os.unlink(path)
+    try:
+        subprocess.check_call(f"attrib -H {path}")
+        os.chmod(path, stat.S_IWRITE)
+        os.unlink(path)
+    except:
+        pass
 
 def parseJDKVersion(path):
     try:

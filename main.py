@@ -32,6 +32,14 @@ def setFolder():
 
 setFolder()
 
+
+def migrateFolder(folder, new_folder):
+    for f in os.listdir(folder):
+        prev_path = f"{folder}/{f}"
+        nwpath = f"{new_folder}/{f}"
+        if (os.path.isfile(prev_path) and not os.path.exists(nwpath)):
+            shutil.move(prev_path, nwpath)
+
 for file in glob.glob("version.txt"):
     # Autoupdate
     with open(file) as f:
@@ -65,8 +73,13 @@ for file in glob.glob("version.txt"):
         if (os.path.exists("jdk-14.0.2")):
             shutil.move("jdk-14.0.2", new_path)
         locales.advPrint("MOVING_CFGS")
-        shutil.rmtree(f"{new_path}/settings")
-        shutil.move("settings/", f"{new_path}/settings")
+        migrateFolder(f"{folder_name}/settings/CFGS", f"{new_path}/settings/CFGS")
+        locales.advPrint("MOVING_HITSOUNDS")
+        migrateFolder(f"{folder_name}/settings/hitsounds", f"{new_path}/settings/hitsounds")
+        locales.advPrint("MOVING_NADEHELPERS")
+        migrateFolder(f"{folder_name}/settings/NadeHelper", f"{new_path}/settings/NadeHelper")
+        locales.advPrint("MOVING_DEFAULT_SETTINGS")
+        migrateFolder(f"{folder_name}/settings/", f"{new_path}/settings/")
         os.chdir(new_path)
         i = locales.advInput("DELETE_FOLDER_AFTER_BUILDING_INPUT")
         if (i.lower() in YES):
@@ -140,4 +153,3 @@ if (not installed or updated):
 
 else:
     startCheat()
-
