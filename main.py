@@ -37,7 +37,9 @@ def migrateFolder(folder, new_folder):
     for f in os.listdir(folder):
         prev_path = f"{folder}/{f}"
         nwpath = f"{new_folder}/{f}"
-        if (os.path.isfile(prev_path) and not os.path.exists(nwpath)):
+        if (os.path.isfile(prev_path)):
+            if (os.path.exists(nwpath)):
+                os.remove(nwpath)
             shutil.move(prev_path, nwpath)
 
 for file in glob.glob("version.txt"):
