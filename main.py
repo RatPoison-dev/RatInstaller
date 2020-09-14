@@ -42,6 +42,24 @@ def migrateFolder(folder, new_folder):
                 os.remove(nwpath)
             shutil.move(prev_path, nwpath)
 
+# Go through all files and pack them to one big peace of shit
+def migrateDefaultSettings(folder, savePath):
+    cfg = ""
+    for file in os.listdir(folder):
+        prevpath = os.path.join(folder, file)
+        if os.path.isfile(prevpath):
+            with open(prevpath, "r") as fr:
+                for line in fr:
+                    try:
+                        splitted = line.split("=")
+                        assert len(splitted) == 2
+                        assert not "//" in line
+                        cfg += line
+                    except AssertionError:
+                        pass
+    with open(savePath, "w") as fw:
+        fw.write(cfg)
+
 for file in glob.glob("version.txt"):
     # Autoupdate
     with open(file) as f:
@@ -81,7 +99,7 @@ for file in glob.glob("version.txt"):
         locales.advPrint("MOVING_NADEHELPERS")
         migrateFolder(f"{folder_name}/settings/NadeHelper", f"{new_path}/settings/NadeHelper")
         locales.advPrint("MOVING_DEFAULT_SETTINGS")
-        migrateFolder(f"{folder_name}/settings/", f"{new_path}/settings/")
+        migrateDefaultSettings(f"{folder_name}/settings/", f"{new_path}/settings/CFGS/default_migration.cfg")
         os.chdir(new_path)
         i = locales.advInput("DELETE_FOLDER_AFTER_BUILDING_INPUT")
         if (i.lower() in YES):
@@ -129,7 +147,7 @@ if (not installed or updated):
                 shutil.move(file, "../")
         os.chdir("../")
         setFolder()
-        shutil.rmtree(new_path, ignore_errors=True)
+        shutil.rmtree(new_path, onerror=utils.on_rm_error)
 
     setFolder()
     with open(bat_file, "r") as rFile:
