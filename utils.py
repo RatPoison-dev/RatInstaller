@@ -1,9 +1,71 @@
-import requests, re, random, string, psutil, os, sys, subprocess, stat, threading, time, pyspeedtest, locales
+import requests, re, random, string, psutil, os, sys, subprocess, stat, threading, time, pyspeedtest, locales, glob, settingsTools, shutil
 from pathlib import Path
 from clint.textui import progress
 
+settings = settingsTools.loadSettings()
+
 sendKeepAliveMessage = False
 locales = locales.Locales()
+
+def getInstalledState():
+    if not os.path.exists(settings["build_folder"]): return False
+    if folder_name := getFolderName() == None: return False
+    for _ in Path(folder_name).rglob("*.bat"):
+        return True
+    return False
+
+def getFolderName():
+    if not os.path.exists(settings["build_folder"]): return None
+    for file in Path(settings["build_folder"]).rglob("*.bat"):
+        return str(file.parent)
+
+def getBatName():
+    if not os.path.exists(settings["build_folder"]): return None
+    folder_name = getFolderName()
+    for file in Path(folder_name).rglob("*.bat"):
+        return str(file)
+
+def getSettingsPath():
+    for file in os.listdir(getFolderName()):
+        if (os.path.exists(os.path.join(file, "CFGS"))):
+            return file
+
+def getJarName():
+    if not os.path.exists(settings["build_folder"]): return None
+    folder_name = getFolderName()
+    for file in Path(folder_name).rglob("*.jar"):
+        return str(file.name)
+
+
+def startCheat():
+    bat_file = getBatName()
+    subprocess.run([bat_file])
+
+def migrateDefaultSettings(folder, savePath):
+    cfg = ""
+    for file in os.listdir(folder):
+        prevpath = os.path.join(folder, file)
+        if os.path.isfile(prevpath):
+            with open(prevpath, "r") as fr:
+                for line in fr:
+                    try:
+                        splitted = line.split("=")
+                        assert len(splitted) == 2
+                        assert not "//" in line
+                        cfg += line
+                    except AssertionError:
+                        pass
+    with open(savePath, "w") as fw:
+        fw.write(cfg)
+
+def migrateFolder(folder, new_folder):
+    for f in os.listdir(folder):
+        prev_path = f"{folder}/{f}"
+        nwpath = f"{new_folder}/{f}"
+        if (os.path.isfile(prev_path)):
+            if (os.path.exists(nwpath)):
+                os.remove(nwpath)
+            shutil.move(prev_path, nwpath)
 
 def downloadFileWithBar(path, link):
     r = requests.get(link, stream=True)
@@ -66,12 +128,3 @@ def startKeepAliveThread():
     global sendKeepAliveMessage
     sendKeepAliveMessage = True
     threading.Thread(target=sendKeepAlive, name="Keep-Alive").start()
-
-def searchJDK():
-    for file in os.listdir():
-        if ("jdk" in file):
-            setJavaHome(file)
-            return True
-    jdk = os.environ.get("JAVA_HOME")
-    # why tf your jdk points to recycle bin bitch are you retarted
-    return jdk is not None and verifyPath(jdk)
