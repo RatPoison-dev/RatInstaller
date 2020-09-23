@@ -8,8 +8,7 @@ sendKeepAliveMessage = False
 locales = locales.Locales()
 
 def getInstalledState():
-    if not os.path.exists(settings["build_folder"]): return False
-    if folder_name := getFolderName() == None: return False
+    if (folder_name := getFolderName()) == None: return False
     for _ in Path(folder_name).rglob("*.bat"):
         return True
     return False
@@ -18,6 +17,7 @@ def getFolderName():
     if not os.path.exists(settings["build_folder"]): return None
     for file in Path(settings["build_folder"]).rglob("*.bat"):
         return str(file.parent)
+    return None
 
 def getBatName():
     if not os.path.exists(settings["build_folder"]): return None
