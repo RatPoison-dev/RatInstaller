@@ -104,15 +104,19 @@ def searchFile(file):
     return Path(pathToSearch).rglob(file)
 
 def killJDKs():
-    for path in searchFile("jps.exe"):
-        strPath = str(path)
-        processes = [int(x) for x in subprocess.getoutput(f"\"{strPath}\" -q").split("\n")]
-        for process in processes:
-            try:
-                os.kill(process, 0)
-            except:
-                pass
-        break
+    try:
+        for path in searchFile("jps.exe"):
+            strPath = str(path)
+            processes = [int(x) for x in subprocess.getoutput(f"\"{strPath}\" -q").split("\n")]
+            for process in processes:
+                try:
+                    os.kill(process, 0)
+                except:
+                    pass
+            break
+    except:
+        # Nah
+        pass
 
 def setJavaHome(path):
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
