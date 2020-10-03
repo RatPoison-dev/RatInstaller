@@ -16,8 +16,8 @@ class DefaultSettings(object):
         return str(self.__dict__)
 
 def loadSettings():
-    if (os.path.exists("settings.json")):
-        with open("settings.json") as settingsFile:
-            return json.loads(settingsFile)
+    if (os.path.exists("installerSettings.json")):
+        with open("installerSettings.json") as settingsFile:
+            return json.load(settingsFile)
     else:
         return DefaultSettings()

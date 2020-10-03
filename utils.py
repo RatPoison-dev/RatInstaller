@@ -84,6 +84,10 @@ def on_rm_error(func, path, exc_info):
     except:
         pass
 
+def askStartCheat():
+    if (locales.advInput("START_CHEAT_INPUT") in locales.YES):
+        startCheat()
+
 def parseJDKVersion(path):
     try:
         return int(re.findall(r"jdk-\d+", path.lower())[0].split("jdk-")[1])

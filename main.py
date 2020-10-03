@@ -1,4 +1,4 @@
-import shutil, utils, settingsTools, winver, locales, jdk_tools, update, compile_tools, argparse, os, subprocess, __main__
+import shutil, utils, settingsTools, winver, locales, jdk_tools, update, compile_tools, argparse, os, subprocess, __main__, exceptions
 from clint.textui import progress
 from pathlib import Path
 locales = locales.Locales()
@@ -18,8 +18,7 @@ if args.cd == "True":
     if (generated_folder_path is not None and locales.advInput("DELETE_FOLDER_AFTER_BUILDING_INPUT") in YES):
         update.delete_folder(generated_folder_path)
     compile_tools.compile()
-    if (locales.advInput("START_CHEAT_INPUT") in locales.YES):
-        utils.startCheat()
+    utils.askStartCheat()
 else:  
     if (not jdk_tools.searchJDK() or settings["force_install_jdk"] == True):
         jdk_tools.downloadJDK()
@@ -27,10 +26,19 @@ else:
     if installed := utils.getInstalledState():
         shouldUpdate, origin_version, remote_version, origin_branch = update.shouldUpdate()
         if shouldUpdate:
-            generated_folder_path = update.download_repo(origin_version, remote_version, origin_branch) if settings["bypass_download"] == False else "RatPoison-new-testing"
+            if (not settings["bypass_download"]):
+                generated_folder_path = update.download_repo(origin_version, remote_version, origin_branch)
+            else:
+                generated_folder_path = ""
+                for i in os.listdir():
+                    if "RatPoison" in i and os.path.isdir(i) and "version.txt" in os.listdir(i): 
+                        generated_folder_path = i
+                        break
+                if generated_folder_path == "": raise exceptions.BypassDownloadError("RatPoison folder was not found")
             subprocess.check_call(f"{generated_folder_path}/{executing}.exe --cd=True --path={generated_folder_path}")
+        else:
+            utils.askStartCheat()
 
     if not installed:
         compile_tools.compile()
-        if (locales.advInput("START_CHEAT_INPUT") in locales.YES):
-            utils.startCheat()
+        utils.askStartCheat()
