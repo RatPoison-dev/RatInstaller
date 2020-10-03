@@ -41,7 +41,7 @@ class Locales(object):
     def YES(self):
         return self.dict["YES"]
     def message(self, k, globals={}):
-        r = self.dict[k] if (k in self.dict.keys()) else self.init_default_locales()[k]
+        r = self.dict[k] if (k in self.dict) else self.init_default_locales()[k]
         for gl, gl_val in globals.items():
             if gl in r:
                 r = r.replace(f"!{gl}", gl_val)
