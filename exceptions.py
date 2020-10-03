@@ -1,0 +1,2 @@
+class BypassDownloadError(Exception):
+    pass
