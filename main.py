@@ -36,9 +36,9 @@ else:
                         break
                 if generated_folder_path == "": raise exceptions.BypassDownloadError("RatPoison folder was not found")
             subprocess.check_call(f"{generated_folder_path}/{executing}.exe --cd=True --path={generated_folder_path}")
-        else:
+        elif not settings["force_cheat_compile"]:
             utils.askStartCheat()
 
-    if not installed:
+    if not installed or settings["force_cheat_compile"]:
         compile_tools.compile()
         utils.askStartCheat()
