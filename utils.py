@@ -13,6 +13,10 @@ def getInstalledState():
         return True
     return False
 
+def rmtree(path, **kwargs):
+    shutil.rmtree(path, onerror=on_rm_error, **kwargs)
+
+
 def getFolderName():
     if not os.path.exists(settings["build_folder"]): return None
     for file in Path(settings["build_folder"]).rglob("*.bat"):

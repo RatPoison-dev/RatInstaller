@@ -1,10 +1,12 @@
 import locales, utils, subprocess, os
+from pathlib import Path
 
 locales = locales.Locales()
 
 def compile():
     locales.advPrint("BUILDING")
     subprocess.check_call(["gradlew.bat", "RatPoison"])
+    deleteLibsFolder()
     utils.killJDKs()
     bat_file = utils.getBatName()
     for path in utils.searchFile("java.exe"):
@@ -19,6 +21,12 @@ def compile():
     if (locales.advInput("RANDOMIZE_FILE_NAMES_INPUT") in locales.YES):
         randomize_file_names()
     replace_bat_pathes()
+
+def deleteLibsFolder():
+    for path in Path(os.getcwd()).rglob("libs"):
+        if len(listdir := os.listdir(strpath := str(path))) > 0 and "RatPoison" in listdir[0]:
+            utils.rmtree(strpath)
+            break
 
 
 def randomize_file_names():
