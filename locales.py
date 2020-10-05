@@ -4,8 +4,8 @@ class Locales(object):
         return {
             "YES": ["y", "yes"],
             "YES_OR_NO": "[Y/N]",
-            "DOWNLOADING_NEW_VERSION": "Downloading new update.\nOld version: !origin_version, new version: !remote_version",
-            "NEW_VERSION_AVAILABLE_INPUT": "New version is available, we highly recommend having your cheat up to date. Do you want to update your cheat now?",
+            "DOWNLOADING_NEW_VERSION": "Downloading new update.",
+            "NEW_VERSION_AVAILABLE_INPUT": "New version is available, we highly recommend having your cheat up to date. Do you want to update your cheat now?\nOld version: !origin_version, new version: !remote_version",
             "FOLDER_ALREADY_EXIST_INPUT": "Folder: !new_path found. Would you like to delete it?",
             "FOLDER_DELETED": "Folder deleted successfully. Downloading...",
             "DOWNLOADING_FINISHED": "Downloading finished.",

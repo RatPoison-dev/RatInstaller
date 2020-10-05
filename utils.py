@@ -30,9 +30,9 @@ def getBatName():
         return str(file)
 
 def getSettingsPath():
-    for file in os.listdir(getFolderName()):
+    for file in os.listdir(folder_name := getFolderName()):
         if (os.path.exists(os.path.join(file, "CFGS"))):
-            return file
+            return os.path.join(folder_name, file)
 
 def getJarName():
     if not os.path.exists(settings["build_folder"]): return None
