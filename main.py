@@ -12,13 +12,15 @@ parser.add_argument("--cd", default="False", help="Installer's variable to commu
 parser.add_argument("--path", default=None, help="Installer's variable to communicate with spawned installer after update. Don't edit manually.")
 args = parser.parse_args()
 
-if args.cd == "True":  
-    generated_folder_path = args.path
+def runContinueUpdateLoop(generated_folder_path):
     update.continue_actions(generated_folder_path)
     if (generated_folder_path is not None and locales.advInput("DELETE_FOLDER_AFTER_BUILDING_INPUT") in YES):
         update.delete_folder(generated_folder_path)
     compile_tools.compile()
     utils.askStartCheat()
+
+if args.cd == "True":  
+    runContinueUpdateLoop(args.path)
 else:  
     if (not jdk_tools.searchJDK() or settings["force_install_jdk"] == True):
         jdk_tools.downloadJDK()
@@ -35,7 +37,10 @@ else:
                         generated_folder_path = i
                         break
                 if generated_folder_path == "": raise exceptions.BypassDownloadError("RatPoison folder was not found")
-            subprocess.check_call(f"{generated_folder_path}/{executing}.exe --cd=True --path={generated_folder_path}")
+            if settings["update_type"] == "call_installer":
+                subprocess.check_call(f"{generated_folder_path}/{executing}.exe --cd=True --path={generated_folder_path}")
+            else:
+                runContinueUpdateLoop(generated_folder_path)
         elif not settings["force_cheat_compile"]:
             utils.askStartCheat()
 
