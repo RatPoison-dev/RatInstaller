@@ -1,7 +1,7 @@
 
-<h3 align="center">RatInstaller</h3>
+<h3>RatInstaller</h3>
 
-<div align="center">
+<div>
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 
@@ -9,7 +9,7 @@
 
 ---
 
-<p align="center"> Installer for RatPoison
+<p> Installer for RatPoison
     <br> 
 </p>
 
