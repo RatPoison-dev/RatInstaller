@@ -39,13 +39,13 @@ def continue_actions(new_path):
 def delete_folder(new_path):
     for file in os.listdir("../"):
         filePath = os.path.join("..", file)
-        if (not new_path in file):
+        if (not new_path in file and not executing in file):
             if (os.path.isdir(filePath)):
                 utils.rmtree(filePath)
             else:
                 os.remove(filePath)
     for file in os.listdir(os.getcwd()):
-        if (not ".git" in file):
+        if (not ".git" in file and not executing in file):
             shutil.move(file, "../")
     os.chdir("../")
     utils.rmtree(new_path)
