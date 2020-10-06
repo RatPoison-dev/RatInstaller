@@ -29,7 +29,7 @@ else:
         shouldUpdate, origin_version, remote_version, origin_branch = update.shouldUpdate()
         if shouldUpdate:
             if (not settings["bypass_download"]):
-                generated_folder_path = update.download_repo(origin_version, remote_version, origin_branch)
+                generated_folder_path = update.download_repo(origin_branch)
             else:
                 generated_folder_path = ""
                 for i in os.listdir():

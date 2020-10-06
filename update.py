@@ -7,8 +7,8 @@ YES = locales.YES
 
 repository = settings["github_repo"]
 
-def download_repo(origin_version, remote_version, origin_branch):
-    locales.advPrint("DOWNLOADING_NEW_VERSION", globals={"origin_version": origin_version, "remote_version": remote_version})
+def download_repo(origin_branch):
+    locales.advPrint("DOWNLOADING_NEW_VERSION")
     new_path = f"RatPoison-{origin_branch}"
     if (os.path.exists(new_path)):
         if (locales.advInput("FOLDER_ALREADY_EXIST_INPUT", {"new_path": new_path}) in YES):
@@ -63,7 +63,7 @@ def shouldUpdate():
             remote_version = remote_text[0]
             if (remote_version == origin_version):
                 return False, 0, 0, 0
-            shouldUpdate = settings["force_cheat_update"] or (locales.advInput("NEW_VERSION_AVAILABLE_INPUT") in YES)
+            shouldUpdate = settings["force_cheat_update"] or (locales.advInput("NEW_VERSION_AVAILABLE_INPUT", globals={"origin_version": origin_version, "remote_version": remote_version}) in YES)
             if (not shouldUpdate):
                 return False, 0, 0, 0
             return True, origin_version, remote_version, origin_branch

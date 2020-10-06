@@ -2,7 +2,7 @@
     "YES": ["y", "yes", "д", "да"],
     "YES_OR_NO": "[ДА/НЕТ]",
     "DOWNLOADING_NEW_VERSION": "Происходит обновление.",
-    "NEW_VERSION_AVAILABLE_INPUT": "Найдено обновление. Желаете обновить чит?\n Предыдущая версия: !origin_version, новая версия: !remote_version",
+    "NEW_VERSION_AVAILABLE_INPUT": "Найдено обновление. Желаете обновить чит?\nПредыдущая версия: !origin_version, новая версия: !remote_version",
     "FOLDER_ALREADY_EXIST_INPUT": "Папка !new_path уже существует. Желаете удалить ее?",
     "FOLDER_DELETED": "Папка успешно удалена. Продолжаем загрузку...",
     "DOWNLOADING_FINISHED": "Загрузка завершена.",
