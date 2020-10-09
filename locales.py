@@ -1,4 +1,4 @@
-import requests, locale  
+import requests, locale
 class Locales(object):
     def init_default_locales(self):
         return {
@@ -7,6 +7,8 @@ class Locales(object):
             "DOWNLOADING_NEW_VERSION": "Downloading new update.",
             "NEW_VERSION_AVAILABLE_INPUT": "New version is available, we highly recommend having your cheat up to date. Do you want to update your cheat now?\nOld version: !origin_version, new version: !remote_version",
             "FOLDER_ALREADY_EXIST_INPUT": "Folder: !new_path found. Would you like to delete it?",
+            "BRANCH_TO_DOWNLOAD": "Choose branch to download",
+            "DAYS_AGO": "!days days ago",
             "FOLDER_DELETED": "Folder deleted successfully. Downloading...",
             "DOWNLOADING_FINISHED": "Downloading finished.",
             "MOVING_CFGS": "[Migration] Moving CFGS",
@@ -18,7 +20,6 @@ class Locales(object):
             "BUILDING": "Building RatPoison...",
             "RANDOMIZE_FILE_NAMES_INPUT": "Would you like to randomize the file name for safety?",
             "START_CHEAT_INPUT": "Do you want to start the cheat?",
-            "DOWNLOADING_REPO_KEEP_ALIVE": "Downloading git repo.. Download speed: !speed Mbps ↓",
             "OUTDATED_WINVER_WARNING": "[WARNING] Your operating system is not officially supported by RatPoison. You could experience various bugs that will never be fixed. Proceed with caution."
         }
     def __init__(self):
@@ -44,5 +45,5 @@ class Locales(object):
         r = self.dict[k] if (k in self.dict) else self.init_default_locales()[k]
         for gl, gl_val in globals.items():
             if gl in r:
-                r = r.replace(f"!{gl}", gl_val)
+                r = r.replace(f"!{gl}", str(gl_val))
         return r

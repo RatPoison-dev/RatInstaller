@@ -4,6 +4,8 @@
     "DOWNLOADING_NEW_VERSION": "Pobieram nową aktualizację",
     "NEW_VERSION_AVAILABLE_INPUT": "Nowa wersja jest dostępna, zalecamy zaaktualizować cheata do najnowszej wersji. Czy chcesz zaaktualizować cheata teraz?\nPoprzednia wersja: !origin_version, nowa wersja: !remote_version",
     "FOLDER_ALREADY_EXIST_INPUT": "Znaleziono folder !new_path, czy chcesz go usunąć?",
+    "BRANCH_TO_DOWNLOAD": "Choose branch to download",
+    "DAYS_AGO": "!days days ago",
     "FOLDER_DELETED": "Pomyślnie usunięto folder. Pobieram...",
     "DOWNLOADING_FINISHED": "Pobieranie zakończone.",
     "MOVING_CFGS": "[Migracja] Przenoszę CFGS",
@@ -15,6 +17,5 @@
     "BUILDING": "Kompiluję RatPoison...",
     "RANDOMIZE_FILE_NAMES_INPUT": "Czy chcesz zmienić nazwę pliku dla bezpieczeństwa?",
     "START_CHEAT_INPUT": "Czy chcesz uruchomić cheata?",
-    "DOWNLOADING_REPO_KEEP_ALIVE": "Ściągam repozytorium.. Prędkość pobierania: !speed Mbps ↓",
     "OUTDATED_WINVER_WARNING": "[OSTRZEŻENIE] Twój system operacyjny nie jest oficjalnie wspierany przez RatPoison. Możesz natknąć się na problemy, które nigdy nie będą naprawione. Postępuj z należytą ostrożnością."
 }

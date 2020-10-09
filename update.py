@@ -1,4 +1,4 @@
-import glob, requests, settingsTools, locales, os, subprocess, shutil, utils, pygit2, __main__
+import glob, requests, settingsTools, locales, os, subprocess, shutil, utils, __main__
 settings = settingsTools.loadSettings()
 locales = locales.Locales()
 executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
@@ -9,15 +9,13 @@ repository = settings["github_repo"]
 
 def download_repo(origin_branch):
     locales.advPrint("DOWNLOADING_NEW_VERSION")
-    new_path = f"RatPoison-{origin_branch}"
+    new_path = f"{settings.repository_name}-{origin_branch}"
     if (os.path.exists(new_path)):
         if (locales.advInput("FOLDER_ALREADY_EXIST_INPUT", {"new_path": new_path}) in YES):
-            shutil.rmtree(new_path, onerror=utils.on_rm_error)
+            utils.rmtree(new_path)
         locales.advPrint("FOLDER_DELETED")
-    utils.startKeepAliveThread()
-    pygit2.clone_repository(f"https://github.com/{repository}.git", new_path, checkout_branch=origin_branch)
+    utils.downloadFileAndExtract(f"https://github.com/{settings['github_repo']}/archive/{origin_branch}.zip", f"{origin_branch}.zip")
     locales.advPrint("DOWNLOADING_FINISHED")
-    utils.sendKeepAliveMessage = False
     return new_path
 
 def continue_actions(new_path):

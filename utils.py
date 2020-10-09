@@ -1,17 +1,40 @@
-import requests, re, random, string, psutil, os, sys, subprocess, stat, threading, time, pyspeedtest, locales, glob, settingsTools, shutil
+import re, random, string, os, sys, subprocess, stat, threading, time, locales, glob, settingsTools, shutil, zipfile, importlib, requests
 from pathlib import Path
-from clint.textui import progress
+from tqdm import tqdm
+import urllib.request
+from datetime import datetime
 
 settings = settingsTools.loadSettings()
-
-sendKeepAliveMessage = False
 locales = locales.Locales()
 
-def getInstalledState():
+def getBuildedState():
     if (folder_name := getFolderName()) == None: return False
     for _ in Path(folder_name).rglob("*.bat"):
         return True
     return False
+
+def getInstalledState():
+    #TODO: get file names from all branches and check if none of them are matching with os.listdir()
+    return "version.txt" in os.listdir()
+
+def testInternetConnection():
+    try:
+        requests.get("https://google.com")
+        return True
+    except:
+        return False
+
+def getRepositoryBranches(repository):
+    tmp_branches = []
+    branches = requests.get(f"https://api.github.com/repos/{repository}/branches").json()
+    for branch in branches:
+        commit = branch["commit"]["sha"]
+        commit_info = requests.get(f"https://api.github.com/repos/{repository}/commits/{commit}").json()
+        commit_datetime = datetime.strptime(commit_info["commit"]["author"]["date"], "%Y-%m-%dT%H:%M:%S%z").replace(tzinfo=None)
+        delta = datetime.now()-commit_datetime
+        locales.message("DAYS_AGO", {"days": delta.days})
+        tmp_branches.append(f"{branch['name']} [{locales.message('DAYS_AGO', {'days': delta.days})}]")
+    return tmp_branches
 
 def rmtree(path, **kwargs):
     shutil.rmtree(path, onerror=on_rm_error, **kwargs)
@@ -54,7 +77,7 @@ def migrateDefaultSettings(folder, savePath):
                 for line in fr:
                     try:
                         splitted = line.split("=")
-                        assert len(splitted) == 2
+                        assert len(splitted) >= 2
                         assert not "//" in line
                         cfg += line
                     except AssertionError:
@@ -71,15 +94,25 @@ def migrateFolder(folder, new_folder):
                 os.remove(nwpath)
             shutil.move(prev_path, nwpath)
 
-def downloadFileWithBar(path, link):
-    r = requests.get(link, stream=True)
-    with open(path, 'wb') as f:
-        total_length = int(r.headers.get('content-length'))
-        for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1): 
-            if chunk:
-                f.write(chunk)
-                f.flush()
+class DownloadProgressBar(tqdm):
+    def update_to(self, b=1, bsize=1, tsize=None):
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)
 
+def downloadFileAndExtract(url, output_path):
+    downloadFileWithBar(url, output_path)
+    with zipfile.ZipFile(output_path) as zip_ref:
+            zip_ref.extractall("")
+    os.remove(output_path)
+
+#https://stackoverflow.com/questions/15644964/python-progress-bar-and-downloads
+def downloadFileWithBar(url, output_path):
+    with DownloadProgressBar(unit='B', unit_scale=True,
+                             miniters=1, desc=url.split('/')[-1], ascii=True) as t:
+        urllib.request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
+
+#https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
 def on_rm_error(func, path, exc_info):
     try:
         subprocess.check_call(f"attrib -H {path}")
@@ -112,6 +145,7 @@ def searchFile(file):
     return Path(pathToSearch).rglob(file)
 
 def killJDKs():
+    #kill all processes returned by `jps.exe -q`
     try:
         for path in searchFile("jps.exe"):
             strPath = str(path)
@@ -128,15 +162,3 @@ def killJDKs():
 
 def setJavaHome(path):
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
-
-def sendKeepAlive():
-    st = pyspeedtest.SpeedTest("google.com")
-    while sendKeepAliveMessage:
-        speed = "{:.3f}".format(st.download()/1024/1024)
-        locales.advPrint("DOWNLOADING_REPO_KEEP_ALIVE", globals={"speed":speed})
-        time.sleep(5)
-
-def startKeepAliveThread():
-    global sendKeepAliveMessage
-    sendKeepAliveMessage = True
-    threading.Thread(target=sendKeepAlive, name="Keep-Alive").start()
