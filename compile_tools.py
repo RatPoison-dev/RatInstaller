@@ -1,5 +1,9 @@
-import locales, utils, subprocess, os
 from pathlib import Path
+
+import locales
+import os
+import subprocess
+import utils
 
 locales = locales.Locales()
 
@@ -10,7 +14,7 @@ def compile():
     utils.killJDKs()
     bat_file = utils.getBatName()
     for path in utils.searchFile("java.exe"):
-        if (utils.verifyPath(str(path))):
+        if utils.verifyPath(str(path)):
             java_exe = str(path)
             with open(bat_file, "r") as rFile:
                 prevLines = rFile.readlines()
@@ -18,7 +22,7 @@ def compile():
             with open(bat_file, "w") as wFile:
                 wFile.writelines(prevLines)
             break
-    if (locales.advInput("RANDOMIZE_FILE_NAMES_INPUT") in locales.YES):
+    if locales.advInput("RANDOMIZE_FILE_NAMES_INPUT") in locales.YES:
         randomize_file_names()
     replace_bat_pathes()
 
@@ -34,7 +38,7 @@ def randomize_file_names():
     folder_name = utils.getFolderName()
     for file in os.listdir(folder_name):
         path_to_file = os.path.join(folder_name, file)
-        if (os.path.isfile(path_to_file)):
+        if os.path.isfile(path_to_file):
             fileExt = os.path.splitext(file)[1]
             os.rename(path_to_file, f"{folder_name}/{random_name}{fileExt}")
     

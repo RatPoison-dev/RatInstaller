@@ -1,8 +1,13 @@
 import traceback, os, utils, atexit, settingsTools
 from whaaaaat import print_json
+
 settings = settingsTools.loadSettings()
+
+
 def onexit():
     utils.killJDKs()
+
+
 atexit.register(onexit)
 # Crash handler
 try:

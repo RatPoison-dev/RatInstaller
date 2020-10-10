@@ -1,14 +1,17 @@
 import os, json
 
-DEFAULT_SETTINGS = {'build_folder': 'build/',
-                    'bypass_download': False,
-                    'force_cheat_compile': False, 
-                    'force_cheat_update': False, 
-                    'force_install_jdk': False, 
-                    'github_repo': 'TheFuckingRat/RatPoison', 
-                    'jdk_link': 'https://download.jav...64_bin.zip', 
-                    'jdk_zip_name': 'JDK.zip', 
-                    'update_type': 'call_installer'
+DEFAULT_SETTINGS = {
+                    "force_install_jdk": False,
+                    "force_cheat_update": False,
+                    "force_cheat_compile": False,
+                    "update_type": "call_installer",
+                    "build_folder": "build/",
+                    "jdk_zip_name": "JDK.zip",
+                    "github_repo": "TheFuckingRat/RatPoison",
+                    "settings_directory": "settings/",
+                    "bypass_download": False,
+                    "show_last_X_commits": 5,
+                    "jdk_link": "https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_windows-x64_bin.zip"
                     }
 
 class Settings(object):

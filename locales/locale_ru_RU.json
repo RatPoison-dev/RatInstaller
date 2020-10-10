@@ -1,8 +1,10 @@
 {
     "YES": ["y", "yes", "д", "да"],
     "YES_OR_NO": "[ДА/НЕТ]",
+    "CLONING_INTO": "Происходит клонирование в: !new_dir",
+    "COMMIT_DIFF_RESULTS": "Мы сравнили вашу версию чита и версию чита с платформы GitHub. Результаты сравнения:",
     "DOWNLOADING_NEW_VERSION": "Происходит обновление.",
-    "NEW_VERSION_AVAILABLE_INPUT": "Найдено обновление. Желаете обновить чит?\nПредыдущая версия: !origin_version, новая версия: !remote_version",
+    "NEW_VERSION_AVAILABLE_INPUT": "Желаете обновить чит?\nПредыдущая версия: !origin_version, новая версия: !remote_version",
     "FOLDER_ALREADY_EXIST_INPUT": "Папка !new_path уже существует. Желаете удалить ее?",
     "BRANCH_TO_DOWNLOAD": "Выберите предпочитаемую ветку разработки",
     "DAYS_AGO": "обновлено !days дня назад",
