@@ -1,8 +1,8 @@
 {
     "YES": ["y", "yes", "t", "tak"],
     "YES_OR_NO": "[TAK/NIE]",
-    "CLONING_INTO": "Cloning into: !new_dir",
-    "COMMIT_DIFF_RESULTS": "We have compared your cheat version and cheat version from GitHub. Here are comparison results:",
+    "CLONING_INTO": "Klonuję do: !new_dir",
+    "COMMIT_DIFF_RESULTS": "Porównaliśmy twoją wersję cheata i wersję cheata z GitHuba. Oto wyniki porównania:",
     "DOWNLOADING_NEW_VERSION": "Pobieram nową aktualizację",
     "NEW_VERSION_AVAILABLE_INPUT": "Nowa wersja jest dostępna, zalecamy zaaktualizować cheata do najnowszej wersji. Czy chcesz zaaktualizować cheata teraz?\nPoprzednia wersja: !origin_version, nowa wersja: !remote_version",
     "FOLDER_ALREADY_EXIST_INPUT": "Znaleziono folder !new_path, czy chcesz go usunąć?",
