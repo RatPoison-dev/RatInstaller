@@ -15,7 +15,7 @@ class Version(object):
         lines = content.splitlines()
         self.version = lines[0].replace("\n", "")
         self.branch = lines[1].replace("\n", "") if len(lines) >= 2 else None
-        self.commit_hash = lines[2].replace("\n", "") if len(lines) >= 3 else None
+        self.commit_hash = lines[2].replace("\n", "") if len(lines) >= 3 and lines[2].replace("\n", "") != "" else None
         self.version_file = None
 
     def write_commit_hash(self, hash):
@@ -45,9 +45,30 @@ class Repository(object):
         self.name = name
         self.cache = {}
 
+    def get_download_url(self, branch, path):
+        return f"https://raw.githubusercontent.com/{self.name}/{branch}/{path}"
+
     @property
     def repository_name(self):
         return self.name.split("/")[1]
+
+    def get_tree(self, branch) -> dict:
+        tmp_tree = {}
+        r = requests.get(f"https://api.github.com/repos/{self.name}/git/trees/{branch}?recursive=true").json()
+        self.__verify_request(r)
+        for i in r["tree"]:
+            tmp_tree[i["path"]] = i["type"]
+        return tmp_tree
+
+    def compare_tree(self, branch):
+        tree = self.get_tree(branch)
+        for file, type in tree.items():
+            if not os.path.exists(file):
+                if type == "tree":
+                    os.makedirs(file)
+                else:
+                    locales.advPrint("FILE_IS_MISSING", {"file": file})
+                    utils.downloadFileWithBar(self.get_download_url(branch, file), file)
 
     def get_cache(self, *args):
         last_arg = None

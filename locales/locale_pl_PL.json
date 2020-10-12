@@ -1,6 +1,7 @@
 {
     "YES": ["y", "yes", "t", "tak"],
     "YES_OR_NO": "[TAK/NIE]",
+    "FILE_IS_MISSING": "!file is missing. Downloading.",
     "CLONING_INTO": "Cloning into: !new_dir",
     "COMMIT_DIFF_RESULTS": "We have compared your cheat version and cheat version from GitHub. Here are comparison results:",
     "DOWNLOADING_NEW_VERSION": "Pobieram nową aktualizację",

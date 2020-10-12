@@ -8,6 +8,7 @@ class Locales(object):
             "YES": ["y", "yes"],
             "YES_OR_NO": "[Y/N]",
             "CLONING_INTO": "Cloning into: !new_dir",
+            "FILE_IS_MISSING": "!file is missing. Downloading.",
             "COMMIT_DIFF_RESULTS": "There were !ahead_commits commits since downloading your cheat version. Here are last !last_count commits:",
             "DOWNLOADING_NEW_VERSION": "Downloading new update.",
             "NEW_VERSION_AVAILABLE_INPUT": "New version is available, we highly recommend having your cheat up to date. Do you want to update your cheat now?\nOld version: !origin_version, new version: !remote_version",
