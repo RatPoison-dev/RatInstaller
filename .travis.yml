@@ -3,5 +3,4 @@ python:
   - "3.8.5"
 install:
   - pip3 install -r requirements.txt
-os: windows
 script: pyinstaller --onefile installer.py --icon=data/1.ico --hidden-import=_cffi_backend --hidden-import=main
