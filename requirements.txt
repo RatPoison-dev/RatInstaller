@@ -2,5 +2,5 @@ clint>=0.5.1
 requests>=2.23.0
 PyInstaller>=3.6
 psutil>=5.7.2
-tdqm>=4.50.2
+tdqm>=0.0.1
 whaaaaat==0.5.2
