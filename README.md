@@ -3,7 +3,7 @@
 
 <div>
 
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![build](https://travis-ci.com/retart1337/RatInstaller.svg?branch=master)]()
 
 </div>
 
