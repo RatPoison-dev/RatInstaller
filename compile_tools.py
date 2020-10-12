@@ -1,13 +1,20 @@
 from pathlib import Path
-
 import locales
 import os
 import subprocess
 import utils
+import repository
+import settingsTools
 
 locales = locales.Locales()
+settings = settingsTools.loadSettings()
+
+repo = repository.Repository(settings['github_repo'])
 
 def compile():
+    if settings["download_missing_files"]:
+        version = repository.Version.get_version_file()
+        repo.compare_tree(version.branch) if version.commit_hash is None else repo.compare_tree(version.commit_hash)
     locales.advPrint("BUILDING")
     subprocess.check_call(["gradlew.bat", "RatPoison"])
     deleteLibsFolder()

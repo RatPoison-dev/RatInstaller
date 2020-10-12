@@ -4,6 +4,7 @@ DEFAULT_SETTINGS = {
                     "force_install_jdk": False,
                     "force_cheat_update": False,
                     "force_cheat_compile": False,
+                    "download_missing_files": True,
                     "update_type": "call_installer",
                     "build_folder": "build/",
                     "jdk_zip_name": "JDK.zip",
