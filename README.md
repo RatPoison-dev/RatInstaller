@@ -3,7 +3,7 @@
 
 <div>
 
-[![build](https://travis-ci.com/retart1337/RatInstaller.svg?branch=master)]()
+[![build](https://travis-ci.com/retart1337/RatInstaller.svg?branch=master)](https://travis-ci.com/github/retart1337/RatInstaller)
 
 </div>
 
