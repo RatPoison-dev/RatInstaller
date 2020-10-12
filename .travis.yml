@@ -1,0 +1,6 @@
+launguage: python
+python:
+  - "3.8.5"
+install:
+  - pip3 install -r requirements.txt
+script: pyinstaller --onefile installer.py --icon=data/1.ico --hidden-import=_cffi_backend --hidden-import=main
