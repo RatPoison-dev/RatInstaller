@@ -67,7 +67,7 @@ class Repository(object):
                 if type == "tree":
                     os.makedirs(file)
                 else:
-                    locales.advPrint("FILE_IS_MISSING", {"file": file})
+                    locales.advPrint("FILE_IS_MISSING", globals={"file": file})
                     utils.downloadFileWithBar(self.get_download_url(branch, file), file)
 
     def get_cache(self, *args):
