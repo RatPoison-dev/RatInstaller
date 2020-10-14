@@ -3,7 +3,7 @@
 
 <div>
 
-[![build](https://travis-ci.com/retart1337/RatInstaller.svg?branch=master)](https://travis-ci.com/github/retart1337/RatInstaller)
+[![deepcode](https://www.deepcode.ai/api/gh/badge?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwbGF0Zm9ybTEiOiJnaCIsIm93bmVyMSI6InJldGFydDEzMzciLCJyZXBvMSI6IlJhdEluc3RhbGxlciIsImluY2x1ZGVMaW50IjpmYWxzZSwiYXV0aG9ySWQiOjE3MTM5LCJpYXQiOjE2MDI2NzgyODh9.-C-yDHV8eJ5FOOXsoSOWC2YrQClgHXz7WnJYMcK-RnI)](https://www.deepcode.ai/app/gh/retart1337/RatInstaller/_/dashboard?utm_content=gh%2Fretart1337%2FRatInstaller)
 
 </div>
 
