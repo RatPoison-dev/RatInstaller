@@ -29,7 +29,7 @@ args = parser.parse_args()
 
 if os.environ["TEMP"] in os.getcwd():
     locales.advPrint("TEMP_FOLDER_EXIT")
-    os._exit()
+    os._exit(0)
 
 
 def runContinueUpdateLoop(generated_folder_path):
