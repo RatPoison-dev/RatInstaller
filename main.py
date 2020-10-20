@@ -27,7 +27,7 @@ parser.add_argument("--path", default=None,
                     help="Installer's variable to communicate with spawned installer after update. Don't edit manually.")
 args = parser.parse_args()
 
-if os.environ["TEMP"] in os.getcwd():
+if os.environ["TEMP"] in os.getcwd() and "Rat$EXa" in os.getcwd():
     locales.advPrint("TEMP_FOLDER_EXIT")
     os._exit(0)
 
