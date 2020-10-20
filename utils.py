@@ -127,7 +127,7 @@ def downloadFileWithBar(url, output_path):
 # https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
 def on_rm_error(func, path, exc_info):
     try:
-        subprocess.check_call(f"attrib -H {path}")
+        subprocess.check_call(f"attrib -H \"{path}\"")
         os.chmod(path, stat.S_IWRITE)
         os.unlink(path)
     except:

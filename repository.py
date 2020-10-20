@@ -40,7 +40,9 @@ class Version(object):
                 return cls
 
 class Repository(object):
-    # TODO: implement set_cache
+    # How to deal with api rate limiting:
+    # Create a ws server that clones repository on any changes (bother ratto to get awesome webhook or clone repo every 5 seconds)
+    # Implement api for it and access it like it is github api
     def __init__(self, name):
         self.name = name
         self.cache = {}
@@ -54,21 +56,26 @@ class Repository(object):
 
     def get_tree(self, branch) -> dict:
         tmp_tree = {}
-        r = requests.get(f"https://api.github.com/repos/{self.name}/git/trees/{branch}?recursive=true").json()
-        self.__verify_request(r)
-        for i in r["tree"]:
-            tmp_tree[i["path"]] = i["type"]
-        return tmp_tree
+        request = requests.get(f"https://api.github.com/repos/{self.name}/git/trees/{branch}?recursive=true")
+        if request.status_code != 404:
+            r = request.json()
+            self.__verify_request(r)
+            for i in r["tree"]:
+                tmp_tree[i["path"]] = i["type"]
+            return tmp_tree
+        else: 
+            return None
 
     def compare_tree(self, branch):
         tree = self.get_tree(branch)
-        for file, type in tree.items():
-            if not os.path.exists(file):
-                if type == "tree":
-                    os.makedirs(file)
-                else:
-                    locales.advPrint("FILE_IS_MISSING", globals={"file": file})
-                    utils.downloadFileWithBar(self.get_download_url(branch, file), file)
+        if tree is not None:
+            for file, type in tree.items():
+                if not os.path.exists(file):
+                    if type == "tree":
+                        os.makedirs(file)
+                    else:
+                        locales.advPrint("FILE_IS_MISSING", globals={"file": file})
+                        utils.downloadFileWithBar(self.get_download_url(branch, file), file)
 
     def get_cache(self, *args):
         last_arg = None
@@ -101,13 +108,18 @@ class Repository(object):
         return tmp_branches
 
     def get_version(self, branch):
-        return Version(requests.get(f"https://raw.githubusercontent.com/{self.name}/{branch}/version.txt").text)
+        request = requests.get(f"https://raw.githubusercontent.com/{self.name}/{branch}/version.txt")
+        return Version(request.text) if request.status_code != 404 else None
 
     def get_latest_commit_hash(self, branch):
         if (cacheres := self.get_cache("branches", branch)) is None:
-            r = requests.get(f"https://api.github.com/repos/{self.name}/branches/{branch}").json()
-            self.__verify_request(r)
-            return r["commit"]["sha"]
+            request = requests.get(f"https://api.github.com/repos/{self.name}/branches/{branch}")
+            if request.status_code != 404:
+                r = request.json()
+                self.__verify_request(r)
+                return r["commit"]["sha"]
+            else:
+                return None
         else:
             return cacheres["sha"]
 
@@ -132,3 +144,4 @@ class Repository(object):
     def __verify_request(self, r):
         if type(r) == dict and r.get("message") is not None:
             raise Exception(r.get("message"))
+Repository.get_latest_commit_hash(Repository("TheFuckingRat/RatPoison"), "new-testing")
