@@ -28,8 +28,7 @@ parser.add_argument("--path", default=None,
 args = parser.parse_args()
 
 if os.environ["TEMP"] in os.getcwd() and "Rat$EXa" in os.getcwd():
-    locales.advPrint("TEMP_FOLDER_EXIT")
-    os._exit(0)
+    raise Exception(locales.message("TEMP_FOLDER_EXIT"))
 
 
 def runContinueUpdateLoop(generated_folder_path):
