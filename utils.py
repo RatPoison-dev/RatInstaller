@@ -110,18 +110,18 @@ class DownloadProgressBar(tqdm):
         self.update(b * bsize - self.n)
 
 
-def downloadFileAndExtract(url, output_path):
-    downloadFileWithBar(url, output_path)
+def downloadFileAndExtract(url, output_path, size=None):
+    downloadFileWithBar(url, output_path, size)
     with zipfile.ZipFile(output_path) as zip_ref:
         zip_ref.extractall("")
     os.remove(output_path)
 
 
 # https://stackoverflow.com/questions/15644964/python-progress-bar-and-downloads
-def downloadFileWithBar(url, output_path):
+def downloadFileWithBar(url, output_path, size=None):
     with DownloadProgressBar(unit='B', unit_scale=True,
                              miniters=1, desc=url.split('/')[-1], ascii=True) as t:
-        urllib.request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
+        urllib.request.urlretrieve(url, filename=output_path, reporthook=lambda b, bsize, tsize: t.update_to(b, bsize, size) if size is not None else t.update_to)
 
 
 # https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows

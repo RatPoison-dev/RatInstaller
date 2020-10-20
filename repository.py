@@ -13,7 +13,7 @@ locales = locales.Locales()
 class Version(object):
     def __init__(self, content):
         lines = content.splitlines()
-        self.version = lines[0].replace("\n", "")
+        self.version = lines[0].replace("\n", "") if len(lines) >= 1 else None
         self.branch = lines[1].replace("\n", "") if len(lines) >= 2 else None
         self.commit_hash = lines[2].replace("\n", "") if len(lines) >= 3 and lines[2].replace("\n", "") != "" else None
         self.version_file = None
@@ -38,7 +38,8 @@ class Version(object):
                 cls = cls(f.read())
                 cls.version_file = strpath
                 return cls
-
+        else:
+            return cls("")
 class Repository(object):
     # How to deal with api rate limiting:
     # Create a ws server that clones repository on any changes (bother ratto to get awesome webhook or clone repo every 5 seconds)
@@ -55,23 +56,34 @@ class Repository(object):
         return self.name.split("/")[1]
 
     def get_tree(self, branch) -> dict:
+        self.cache["tree"] = {}
         tmp_tree = {}
         request = requests.get(f"https://api.github.com/repos/{self.name}/git/trees/{branch}?recursive=true")
         if request.status_code != 404:
             r = request.json()
             self.__verify_request(r)
             for i in r["tree"]:
-                tmp_tree[i["path"]] = i["type"]
+                tmp_tree[i["path"]] = i
+            self.cache["tree"][branch] = tmp_tree
             return tmp_tree
         else: 
             return None
+        
+    def get_size(self, branch):
+        size = 0
+        cacheres = self.get_cache("tree", branch)
+        tree = cacheres if cacheres is not None else self.get_tree(branch)
+        for i in tree.values():
+            tmp_size = i.get("size")
+            size += tmp_size if tmp_size is not None else 0
+        return size
 
     def compare_tree(self, branch):
         tree = self.get_tree(branch)
         if tree is not None:
-            for file, type in tree.items():
+            for file, i in tree.items():
                 if not os.path.exists(file):
-                    if type == "tree":
+                    if i["type"] == "tree":
                         os.makedirs(file)
                     else:
                         locales.advPrint("FILE_IS_MISSING", globals={"file": file})
@@ -127,7 +139,7 @@ class Repository(object):
         version = self.get_version(branch).version
         expected_path = f"{self.repository_name} {version}"
         utils.downloadFileAndExtract(f"https://github.com/{self.name}/archive/{branch}.zip",
-                                     f"{branch}.zip")
+                                     f"{branch}.zip", self.get_size(branch))
         if os.path.exists(expected_path):
             utils.rmtree(expected_path)
         os.rename(f"{self.repository_name}-{branch}", expected_path)
@@ -144,4 +156,3 @@ class Repository(object):
     def __verify_request(self, r):
         if type(r) == dict and r.get("message") is not None:
             raise Exception(r.get("message"))
-Repository.get_latest_commit_hash(Repository("TheFuckingRat/RatPoison"), "new-testing")

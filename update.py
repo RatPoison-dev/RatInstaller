@@ -64,15 +64,15 @@ def shouldUpdate():
     askupdate = False
     origin = repository.Version.get_version_file()
     #commit compare
-    remote_hash = repo.get_latest_commit_hash(origin.branch)
-    if origin.commit_hash is not None and remote_hash is not None and origin.commit_hash != remote_hash:
-        repo.diff_commits(origin.commit_hash, remote_hash)
-        askupdate = True
-    remote = repo.get_version(origin.branch)
-    if origin.version is not None and remote is not None and origin.version != remote.version:
-        askupdate = True
-    should_update = settings["force_cheat_update"] or (locales.advInput("NEW_VERSION_AVAILABLE_INPUT", globals={
-        "origin_version": origin.version, "remote_version": remote.version}) in YES) if askupdate else False
-    should_update = should_update or settings["force_cheat_update"]
-    return should_update, origin.branch
-shouldUpdate()
+    if origin.branch is not None:
+        remote_hash = repo.get_latest_commit_hash(origin.branch)
+        if origin.commit_hash is not None and remote_hash is not None and origin.commit_hash != remote_hash:
+            repo.diff_commits(origin.commit_hash, remote_hash)
+            askupdate = True
+        remote = repo.get_version(origin.branch)
+        if origin.version is not None and remote is not None and origin.version != remote.version:
+            askupdate = True
+        should_update = settings["force_cheat_update"] or (locales.advInput("NEW_VERSION_AVAILABLE_INPUT", globals={
+            "origin_version": origin.version, "remote_version": remote.version}) in YES) if askupdate else False
+        should_update = should_update or settings["force_cheat_update"]
+        return should_update, origin.branch
