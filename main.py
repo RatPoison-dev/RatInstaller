@@ -27,6 +27,10 @@ parser.add_argument("--path", default=None,
                     help="Installer's variable to communicate with spawned installer after update. Don't edit manually.")
 args = parser.parse_args()
 
+if os.environ["TEMP"] in os.getcwd():
+    locales.advPrint("TEMP_FOLDER_EXIT")
+    os._exit()
+
 
 def runContinueUpdateLoop(generated_folder_path):
     update.continue_actions(generated_folder_path)

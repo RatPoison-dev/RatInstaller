@@ -2,6 +2,7 @@
     "YES": ["y", "yes", "t", "tak"],
     "YES_OR_NO": "[TAK/NIE]",
     "CLONING_INTO": "Klonuję do: !new_dir",
+    "TEMP_FOLDER_EXIT": "Installer has detected itself running in temp folder. Please unpack cheat first, then run the installer once again from the unpacked folder.",
     "COMMIT_DIFF_RESULTS": "Porównaliśmy twoją wersję cheata i wersję cheata z GitHuba. Oto wyniki porównania:",
     "FILE_IS_MISSING": "Brakuje pliku !file. Pobieram...",
     "DOWNLOADING_NEW_VERSION": "Pobieram nową aktualizację",
