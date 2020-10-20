@@ -30,7 +30,7 @@ pip3 install -r requirements.txt
 ```
 and 
 ```
-pyinstaller --onefile installer.py --icon=data/1.ico --hidden-import=_cffi_backend --hidden-import=main
+pyinstaller --onefile installer.py --icon=data/1.ico
 ```
 If build was successfully, you will find ``installer.exe`` file in ``dist/`` folder
 
@@ -49,6 +49,8 @@ Settings are located in ``installerSettings.json`` file
 ``force_cheat_update`` - When true, installer will download and install update without asking for your input when update is needed
 
 ``force_cheat_compile`` - When true, installer will compile cheat even when it is already compiled
+
+``download_missing_files`` - When true, installer will diff your files with commit/branch, find missing and download
 
 ``update_type`` - When ``call_installer``, installer will call downloaded installer, otherwise will make everything itself (debugging usage)
 

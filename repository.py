@@ -76,7 +76,7 @@ class Repository(object):
         for i in tree.values():
             tmp_size = i.get("size")
             size += tmp_size if tmp_size is not None else 0
-        return size
+        return size # Uncompressed
 
     def compare_tree(self, branch):
         tree = self.get_tree(branch)

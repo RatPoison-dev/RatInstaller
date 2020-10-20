@@ -1,3 +1,3 @@
 # How to compile:
 pip3 install -r requirements.txt
-pyinstaller --onefile installer.py --icon=data/1.ico --hidden-import=_cffi_backend --hidden-import=main
+pyinstaller --onefile installer.py --icon=data/1.ico
