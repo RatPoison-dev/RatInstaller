@@ -7,6 +7,7 @@ import string
 import subprocess
 import urllib.request
 import zipfile
+import struct
 from pathlib import Path
 
 import requests
@@ -15,27 +16,26 @@ from tqdm import tqdm
 import locales
 import settingsTools
 
-settings = settingsTools.loadSettings()
+settings = settingsTools.load_settings()
 locales = locales.Locales()
 
 
-def getBuildedState():
-    if (folder_name := getFolderName()) == None: return False
+def get_build_state():
+    if (folder_name := get_folder_name()) is None: return False
     for _ in Path(folder_name).rglob("*.bat"):
         return True
     return False
 
 
-def getInstalledState():
-    # TODO: get file names from all branches and check if none of them are matching with os.listdir()
+def get_installed_state():
     return "version.txt" in os.listdir()
 
 
-def testInternetConnection():
+def test_internet_connection():
     try:
         requests.get("https://google.com")
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -43,57 +43,57 @@ def rmtree(path, **kwargs):
     shutil.rmtree(path, onerror=on_rm_error, **kwargs)
 
 
-def getFolderName():
+def get_folder_name():
     if not os.path.exists(settings["build_folder"]): return None
     for file in Path(settings["build_folder"]).rglob("*.bat"):
         return str(file.parent)
     return None
 
 
-def getBatName():
+def get_bat_name():
     if not os.path.exists(settings["build_folder"]): return None
-    folder_name = getFolderName()
+    folder_name = get_folder_name()
     for file in Path(folder_name).rglob("*.bat"):
         return str(file)
 
 
-def getSettingsPath():
-    for file in os.listdir(folder_name := getFolderName()):
-        if (os.path.exists(os.path.join(file, "CFGS"))):
+def get_settings_path():
+    for file in os.listdir(folder_name := get_folder_name()):
+        if os.path.exists(os.path.join(file, "CFGS")):
             return os.path.join(folder_name, file)
 
 
-def getJarName():
+def get_jar_name():
     if not os.path.exists(settings["build_folder"]): return None
-    folder_name = getFolderName()
+    folder_name = get_folder_name()
     for file in Path(folder_name).rglob("*.jar"):
         return str(file.name)
 
 
-def startCheat():
-    bat_file = getBatName()
+def start_cheat():
+    bat_file = get_bat_name()
     subprocess.run([bat_file])
 
 
-def migrateDefaultSettings(folder, savePath):
+def migrate_default_settings(folder, save_path):
     cfg = ""
     for file in os.listdir(folder):
-        prevpath = os.path.join(folder, file)
-        if os.path.isfile(prevpath):
-            with open(prevpath, "r") as fr:
+        prev_path = os.path.join(folder, file)
+        if os.path.isfile(prev_path):
+            with open(prev_path, "r") as fr:
                 for line in fr:
                     try:
                         splitted = line.split("=")
                         assert len(splitted) >= 2
-                        assert not "//" in line
+                        assert "//" not in line
                         cfg += line
                     except AssertionError:
                         pass
-    with open(savePath, "w") as fw:
+    with open(save_path, "w") as fw:
         fw.write(cfg)
 
 
-def migrateFolder(folder, new_folder):
+def migrate_folder(folder, new_folder):
     for f in os.listdir(folder):
         prev_path = f"{folder}/{f}"
         nwpath = f"{new_folder}/{f}"
@@ -104,24 +104,25 @@ def migrateFolder(folder, new_folder):
 
 
 class DownloadProgressBar(tqdm):
-    def update_to(self, b=1, bsize=1, tsize=None):
-        if tsize is not None:
-            self.total = tsize
+    def update_to(self, b=1, bsize=1, total_size=None):
+        if total_size is not None:
+            self.total = total_size
         self.update(b * bsize - self.n)
 
 
-def downloadFileAndExtract(url, output_path, size=None):
-    downloadFileWithBar(url, output_path, size)
+def download_file_and_extract(url, output_path, size=None):
+    download_file_with_bar(url, output_path, size)
     with zipfile.ZipFile(output_path) as zip_ref:
         zip_ref.extractall("")
     os.remove(output_path)
 
 
 # https://stackoverflow.com/questions/15644964/python-progress-bar-and-downloads
-def downloadFileWithBar(url, output_path, size=None):
+def download_file_with_bar(url, output_path, size=None):
     with DownloadProgressBar(unit='B', unit_scale=True,
                              miniters=1, desc=url.split('/')[-1], ascii=True) as t:
-        urllib.request.urlretrieve(url, filename=output_path, reporthook=lambda b, bsize, tsize: t.update_to(b, bsize, size) if size is not None else t.update_to)
+        urllib.request.urlretrieve(url, filename=output_path, reporthook=lambda b, bsize, tsize: t.update_to(b, bsize,
+                                                                                                             size) if size is not None else t.update_to)
 
 
 # https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
@@ -134,52 +135,56 @@ def on_rm_error(func, path, exc_info):
         pass
 
 
-def askStartCheat():
-    if (locales.advInput("START_CHEAT_INPUT") in locales.YES):
-        startCheat()
+def ask_start_cheat():
+    if locales.adv_input("START_CHEAT_INPUT") in locales.yes:
+        start_cheat()
 
 
-def parseJDKVersion(path):
+def parse_jdk_version(path):
     try:
         return int(re.findall(r"jdk-\d+", path.lower())[0].split("jdk-")[1])
-    except:
+    except Exception:
         return None
 
 
-def verifyPath(path):
-    return not "jre" in path.lower() and parseJDKVersion(path) is not None and parseJDKVersion(
-        path) >= 12 and not "$RECYCLE.BIN" in path
+def verify_path(path):
+    return "jre" not in path.lower() and parse_jdk_version(path) is not None and parse_jdk_version(
+        path) >= 12 and "$RECYCLE.BIN" not in path
 
 
-def getRandomName():
+def get_random_name():
     s = ""
     for _ in range(20):
         s += random.choice(string.ascii_uppercase)
     return s
 
 
-def searchFile(file):
-    pathToSearch = os.environ["JAVA_HOME"] if os.environ.get("JAVA_HOME") is not None and verifyPath(
+def search_file(file):
+    path_to_search = os.environ["JAVA_HOME"] if os.environ.get("JAVA_HOME") is not None and verify_path(
         os.environ["JAVA_HOME"]) else os.path.splitdrive(os.getcwd())[0] + "/"
-    return Path(pathToSearch).rglob(file)
+    return Path(path_to_search).rglob(file)
 
 
-def killJDKs():
+def kill_jdk():
     # kill all processes returned by `jps.exe -q`
     try:
-        for path in searchFile("jps.exe"):
-            strPath = str(path)
-            processes = [int(x) for x in subprocess.getoutput(f"\"{strPath}\" -q").split("\n")]
+        for path in search_file("jps.exe"):
+            str_path = str(path)
+            processes = [int(x) for x in subprocess.getoutput(f"\"{str_path}\" -q").split("\n")]
             for process in processes:
                 try:
                     os.kill(process, 0)
-                except:
+                except Exception:
                     pass
             break
-    except:
+    except Exception:
         # Nah
         pass
 
 
-def setJavaHome(path):
+def set_java_home(path):
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
+
+
+def is_x64():
+    return 'PROCESSOR_ARCHITEW6432' in os.environ or os.environ['PROCESSOR_ARCHITECTURE'].endswith('64')

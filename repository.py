@@ -5,7 +5,8 @@ import utils
 import os
 import settingsTools
 from pathlib import Path
-settings = settingsTools.loadSettings()
+
+settings = settingsTools.load_settings()
 
 locales = locales.Locales()
 
@@ -29,7 +30,6 @@ class Version(object):
             with open(self.version_file, "w") as fw:
                 fw.writelines(lines)
 
-
     @classmethod
     def get_version_file(cls):
         for file in Path(".").rglob("version.txt"):
@@ -40,9 +40,12 @@ class Version(object):
                 return cls
         else:
             return cls("")
+
+
 class Repository(object):
     # How to deal with api rate limiting:
-    # Create a ws server that clones repository on any changes (bother ratto to get awesome webhook or clone repo every 5 seconds)
+    # Create a ws server that clones repository on any changes
+    # (bother Ratto to get awesome webhook or clone repo every 5 seconds)
     # Implement api for it and access it like it is github api
     def __init__(self, name):
         self.name = name
@@ -66,9 +69,9 @@ class Repository(object):
                 tmp_tree[i["path"]] = i
             self.cache["tree"][branch] = tmp_tree
             return tmp_tree
-        else: 
+        else:
             return None
-        
+
     def get_size(self, branch):
         size = 0
         cacheres = self.get_cache("tree", branch)
@@ -76,7 +79,7 @@ class Repository(object):
         for i in tree.values():
             tmp_size = i.get("size")
             size += tmp_size if tmp_size is not None else 0
-        return size # Uncompressed
+        return size  # Uncompressed
 
     def compare_tree(self, branch):
         tree = self.get_tree(branch)
@@ -86,8 +89,8 @@ class Repository(object):
                     if i["type"] == "tree":
                         os.makedirs(file)
                     else:
-                        locales.advPrint("FILE_IS_MISSING", globals={"file": file})
-                        utils.downloadFileWithBar(self.get_download_url(branch, file), file)
+                        locales.adv_print("FILE_IS_MISSING", globals={"file": file})
+                        utils.download_file_with_bar(self.get_download_url(branch, file), file)
 
     def get_cache(self, *args):
         last_arg = None
@@ -138,8 +141,8 @@ class Repository(object):
     def clone(self, branch):
         version = self.get_version(branch).version
         expected_path = f"{self.repository_name} {version}"
-        utils.downloadFileAndExtract(f"https://github.com/{self.name}/archive/{branch}.zip",
-                                     f"{branch}.zip", self.get_size(branch))
+        utils.download_file_and_extract(f"https://github.com/{self.name}/archive/{branch}.zip", f"{branch}.zip",
+                                        self.get_size(branch))
         if os.path.exists(expected_path):
             utils.rmtree(expected_path)
         os.rename(f"{self.repository_name}-{branch}", expected_path)
@@ -148,10 +151,9 @@ class Repository(object):
         r = requests.get(f"https://api.github.com/repos/{self.name}/compare/{base}...{head}").json()
         self.__verify_request(r)
         show_commits = settings["show_last_X_commits"]
-        locales.advPrint("COMMIT_DIFF_RESULTS", globals={"ahead_commits": r["ahead_by"], "last_count": show_commits})
+        locales.adv_print("COMMIT_DIFF_RESULTS", globals={"ahead_commits": r["ahead_by"], "last_count": show_commits})
         for commit in r["commits"][-show_commits::]:
             print(f"[+] {commit['commit']['message']}")
-
 
     def __verify_request(self, r):
         if type(r) == dict and r.get("message") is not None:

@@ -3,16 +3,22 @@ import requests
 
 
 class Locales(object):
-    def init_default_locales(self):
+    @staticmethod
+    def init_default_locales():
         return {
             "YES": ["y", "yes"],
             "YES_OR_NO": "[Y/N]",
             "FILE_IS_MISSING": "!file is missing. Downloading.",
-            "TEMP_FOLDER_EXIT": "Installer has detected itself running in temp folder. Please unpack cheat first, then run the installer once again from the unpacked folder.",
+            "CONNECTING_TO_GITHUB": "Connecting to GitHub servers...",
+            "TEMP_FOLDER_EXIT": "Installer has detected itself running in temp folder.\n Please unpack cheat first, "
+                                "then run the installer once again from the unpacked folder.",
             "CLONING_INTO": "Cloning into: !new_dir",
-            "COMMIT_DIFF_RESULTS": "There were !ahead_commits commits since downloading your cheat version. Here are last !last_count commits:",
+            "COMMIT_DIFF_RESULTS": "There were !ahead_commits commits since downloading your cheat version. Here are "
+                                   "last !last_count commits:",
             "DOWNLOADING_NEW_VERSION": "Downloading new update.",
-            "NEW_VERSION_AVAILABLE_INPUT": "New version is available, we highly recommend having your cheat up to date. Do you want to update your cheat now?\nOld version: !origin_version, new version: !remote_version",
+            "NEW_VERSION_AVAILABLE_INPUT": "New version is available, we highly recommend having your cheat up to "
+                                           "date. Do you want to update your cheat now?\nOld version: "
+                                           "!origin_version, new version: !remote_version",
             "FOLDER_ALREADY_EXIST_INPUT": "Folder: !new_path found. Would you like to delete it?",
             "BRANCH_TO_DOWNLOAD": "Choose branch to download",
             "DAYS_AGO": "!days days ago",
@@ -27,7 +33,8 @@ class Locales(object):
             "BUILDING": "Building RatPoison...",
             "RANDOMIZE_FILE_NAMES_INPUT": "Would you like to randomize the file name for safety?",
             "START_CHEAT_INPUT": "Do you want to start the cheat?",
-            "OUTDATED_WINVER_WARNING": "[WARNING] Your operating system is not officially supported by RatPoison. You could experience various bugs that will never be fixed. Proceed with caution."
+            "OUTDATED_WINVER_WARNING": "[WARNING] Your operating system is not officially supported by RatPoison. You "
+                                       "could experience various bugs that will never be fixed. Proceed with caution. "
         }
 
     def __init__(self):
@@ -39,21 +46,21 @@ class Locales(object):
                 self.dict = self.init_default_locales()
             else:
                 self.dict = r.json()
-        except:
+        except Exception:
             # No internet connect
             self.dict = self.init_default_locales()
 
-    def advPrint(self, message, *args, globals={}, **kwargs):
+    def adv_print(self, message, *args, globals={}, **kwargs):
         message = self.message(message, globals)
         print(message, *args, **kwargs)
 
-    def advInput(self, message, globals={}, shouldLower=True):
+    def adv_input(self, message, globals={}, should_lower=True):
         message = self.message(message, globals)
-        tempInput = input(f"{message} {self.message('YES_OR_NO')} ")
-        return tempInput.lower() if shouldLower else tempInput
+        temp_input = input(f"{message} {self.message('YES_OR_NO')} ")
+        return temp_input.lower() if should_lower else temp_input
 
     @property
-    def YES(self):
+    def yes(self):
         return self.dict["YES"]
 
     def message(self, k, globals={}):

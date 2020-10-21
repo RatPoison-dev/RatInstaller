@@ -1,23 +1,35 @@
-import traceback, os, utils, atexit, settingsTools
+import atexit
+import locales
+import os
+import settingsTools
+import traceback
+import utils
 from whaaaaat import print_json
 
-settings = settingsTools.loadSettings()
+settings = settingsTools.load_settings()
+locales = locales.Locales()
+
+can_continue = True
+if os.environ["TEMP"] in os.getcwd():
+    locales.adv_print("TEMP_FOLDER_EXIT")
+    can_continue = False
 
 
-def onexit():
-    utils.killJDKs()
+def on_exit():
+    utils.kill_jdk()
 
 
-atexit.register(onexit)
+atexit.register(on_exit)
 # Crash handler
-try:
-    import main
-except BaseException:
-    print("Some exception occured, please report in discord (https://discord.gg/xkTteTM):")
-    print("----CUT HERE----")
-    print("Installer settings:")
-    print_json(settings.dict)
-    traceback.print_exc()
-    utils.killJDKs()
+if can_continue:
+    try:
+        import main
+    except BaseException:
+        print("Some exception occured, please report in discord (https://discord.gg/xkTteTM):")
+        print("----CUT HERE----")
+        print("Installer settings:")
+        print_json(settings.dict)
+        traceback.print_exc()
+        utils.kill_jdk()
 
 os.system("pause")
