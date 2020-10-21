@@ -60,7 +60,7 @@ else:
                 if settings["update_type"] == "call_installer":
                     subprocess.check_call(
                         f"{generated_folder_path}/{executing}.exe --cd=True --path=\"{generated_folder_path}\"")
-                    exit(0)
+                    os._exit(0)
                 else:
                     run_continue_update_loop(generated_folder_path)
             elif not settings["force_cheat_compile"]:
@@ -92,4 +92,4 @@ else:
             repository.Version.get_version_file().write_commit_hash(commit_hash)
             if os.path.exists(f"{executing}.exe"):
                 subprocess.check_call(f"{executing}.exe")
-                exit(0)
+                os._exit(0)
