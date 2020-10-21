@@ -17,7 +17,7 @@ def search_jdk():
 
 def download_jdk():
     if not search_jdk() or settings["force_install_jdk"]:
-        jdk_link = settings["jdk_link_x64"] if utils.is_x64() else settings["jdk_link_x84"]
+        jdk_link = settings["jdk_link_x64"] if utils.is_x64() else settings["jdk_link_x86"]
         jdk_zip_name = settings["jdk_zip_name"]
         utils.download_file_and_extract(jdk_link, jdk_zip_name)
         os.rename("jdk-14.0.2+12", "jdk-14.0.2") if os.path.exists("jdk-14.0.2+12") else None
