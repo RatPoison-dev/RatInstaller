@@ -1,5 +1,5 @@
-import locales
 import re
+import locales
 import sys
 
 WIN_10 = (10, 0, 0)

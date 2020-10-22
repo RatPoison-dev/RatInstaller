@@ -86,7 +86,7 @@ else:
             branch = raw_branch.split()[0]
             version = repo.get_version(branch).version
             new_dir = f"{repo.repository_name} {version}"
-            locales.adv_print("CLONING_INTO", globals={"new_dir": new_dir})
+            locales.adv_print("CLONING_INTO", variables={"new_dir": new_dir})
             repo.clone(branch)
             os.chdir(new_dir)
             repository.Version.get_version_file().write_commit_hash(commit_hash)

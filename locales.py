@@ -50,12 +50,12 @@ class Locales(object):
             # No internet connect
             self.dict = self.init_default_locales()
 
-    def adv_print(self, message, *args, globals={}, **kwargs):
-        message = self.message(message, globals)
+    def adv_print(self, message, *args, variables={}, **kwargs):
+        message = self.message(message, variables)
         print(message, *args, **kwargs)
 
-    def adv_input(self, message, globals={}, should_lower=True):
-        message = self.message(message, globals)
+    def adv_input(self, message, variables={}, should_lower=True):
+        message = self.message(message, variables)
         temp_input = input(f"{message} {self.message('YES_OR_NO')} ")
         return temp_input.lower() if should_lower else temp_input
 
@@ -63,9 +63,9 @@ class Locales(object):
     def yes(self):
         return self.dict["YES"]
 
-    def message(self, k, globals={}):
+    def message(self, k, variables={}):
         r = self.dict[k] if (k in self.dict) else self.init_default_locales()[k]
-        for gl, gl_val in globals.items():
+        for gl, gl_val in variables.items():
             if gl in r:
                 r = r.replace(f"!{gl}", str(gl_val))
         return r

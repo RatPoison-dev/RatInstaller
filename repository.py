@@ -89,7 +89,7 @@ class Repository(object):
                     if i["type"] == "tree":
                         os.makedirs(file)
                     else:
-                        locales.adv_print("FILE_IS_MISSING", globals={"file": file})
+                        locales.adv_print("FILE_IS_MISSING", variables={"file": file})
                         utils.download_file_with_bar(self.get_download_url(branch, file), file)
 
     def get_cache(self, *args):
@@ -151,7 +151,7 @@ class Repository(object):
         r = requests.get(f"https://api.github.com/repos/{self.name}/compare/{base}...{head}").json()
         self.__verify_request(r)
         show_commits = settings["show_last_X_commits"]
-        locales.adv_print("COMMIT_DIFF_RESULTS", globals={"ahead_commits": r["ahead_by"], "last_count": show_commits})
+        locales.adv_print("COMMIT_DIFF_RESULTS", variables={"ahead_commits": r["ahead_by"], "last_count": show_commits})
         for commit in r["commits"][-show_commits::]:
             print(f"[+] {commit['commit']['message']}")
 

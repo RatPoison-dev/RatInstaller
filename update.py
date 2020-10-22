@@ -72,7 +72,8 @@ def should_update():
         remote = repo.get_version(origin.branch)
         if origin.version is not None and remote is not None and origin.version != remote.version:
             ask_update = True
-        update = settings["force_cheat_update"] or (locales.adv_input("NEW_VERSION_AVAILABLE_INPUT", globals={
+        update = settings["force_cheat_update"] or (locales.adv_input("NEW_VERSION_AVAILABLE_INPUT", variables={
             "origin_version": origin.version, "remote_version": remote.version}) in YES) if ask_update else False
         update = update or settings["force_cheat_update"]
         return update, origin.branch
+    return None, None

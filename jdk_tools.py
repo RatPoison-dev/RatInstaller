@@ -1,4 +1,7 @@
-import utils, settingsTools, locales, os
+import locales
+import os
+import settingsTools
+import utils
 
 settings = settingsTools.load_settings()
 
