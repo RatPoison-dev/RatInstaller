@@ -122,7 +122,7 @@ def download_file_with_bar(url, output_path, size=None):
     with DownloadProgressBar(unit='B', unit_scale=True,
                              miniters=1, desc=url.split('/')[-1], ascii=True) as t:
         urllib.request.urlretrieve(url, filename=output_path, reporthook=lambda b, bsize, tsize: t.update_to(b, bsize,
-                                                                                                             size) if size is not None else t.update_to)
+                                                                                                             size) if size is not None else t.update_to(b, bsize, tsize))
 
 
 # https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
