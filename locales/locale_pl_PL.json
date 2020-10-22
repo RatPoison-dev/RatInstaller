@@ -1,6 +1,9 @@
 {
     "YES": ["y", "yes", "t", "tak"],
     "YES_OR_NO": "[TAK/NIE]",
+    "JDK_ZIP_ALREADY_EXISTS": "!zipfile already exists. Extracting.",
+    "RETRY_BUILD_INPUT": "Build failed. Would you like to have installer download JDK for you and try again?",
+    "KEY_WAS_FORCE_SET": "!key was force set to !value.",
     "CLONING_INTO": "Klonuję do: !new_dir",
     "CONNECTING_TO_GITHUB": "Connecting to GitHub servers...",
     "TEMP_FOLDER_EXIT": "Wykryto uruchomienie Installera w folderze tymczasowym.\n Proszę najpierw wypakować cheata do oddzielnego folderu, następnie uruchomić installer.exe ponownie z nowego folderu.",

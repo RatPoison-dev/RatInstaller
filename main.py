@@ -2,19 +2,18 @@ import __main__
 import argparse
 import compile_tools
 import jdk_tools
-import locales
 import os
-import settingsTools
 import subprocess
 import update
 import utils
 import whaaaaat
 import winver
 import repository
+import settingsTools
 
-locales = locales.Locales()
-YES = locales.yes
-settings = settingsTools.load_settings()
+YES = settingsTools.locales.yes
+locales = settingsTools.locales
+settings = settingsTools.settings
 winver.detect_win()
 executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
 repo = repository.Repository(settings['github_repo'])
@@ -29,7 +28,7 @@ args = parser.parse_args()
 
 def run_continue_update_loop(folder_path):
     update.continue_actions(folder_path)
-    if generated_folder_path is not None and locales.adv_input("DELETE_FOLDER_AFTER_BUILDING_INPUT") in YES:
+    if folder_path is not None and locales.adv_input("DELETE_FOLDER_AFTER_BUILDING_INPUT") in YES:
         update.delete_folder(folder_path)
     compile_tools.compile()
     version_file = repository.Version.get_version_file()
@@ -40,7 +39,12 @@ def run_continue_update_loop(folder_path):
 if args.cd == "True":
     run_continue_update_loop(args.path)
 else:
-    if not jdk_tools.search_jdk() or settings["force_install_jdk"] == True:
+    if jdk_tools.jdk_zip_exists():
+        locales.adv_print(f"JDK_ZIP_ALREADY_EXISTS", variables={"zipfile": settings["jdk_zip_name"]})
+        utils.extract_file(settings["jdk_zip_name"])
+        os.remove(settings["jdk_zip_name"])
+        jdk_tools.extend_path()
+    elif not jdk_tools.search_jdk() or settings["force_install_jdk"]:
         jdk_tools.download_jdk()
     # Update checks only when the
     if installed := utils.get_installed_state():
@@ -55,8 +59,8 @@ else:
                         if repo.repository_name in i and os.path.isdir(i) and "version.txt" in os.listdir(i):
                             generated_folder_path = i
                             break
-                    if generated_folder_path == "": raise Exception(
-                        "RatPoison folder was not found")
+                    if generated_folder_path == "":
+                        raise Exception("RatPoison folder was not found")
                 if settings["update_type"] == "call_installer":
                     subprocess.check_call(
                         f"{generated_folder_path}/{executing}.exe --cd=True --path=\"{generated_folder_path}\"")

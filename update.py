@@ -6,8 +6,8 @@ import repository
 import settingsTools
 import utils
 
-settings = settingsTools.load_settings()
-locales = locales.Locales()
+settings = settingsTools.settings
+locales = settingsTools.locales
 executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
 
 YES = locales.yes
@@ -18,7 +18,7 @@ repo = repository.Repository(settings["github_repo"])
 def download_repo(origin_branch):
     locales.adv_print("DOWNLOADING_NEW_VERSION")
     version = repo.get_version(origin_branch).version
-    new_path = f"{settings.repository_name} {version}"
+    new_path = f"{repo.repository_name} {version}"
     if os.path.exists(new_path):
         if locales.adv_input("FOLDER_ALREADY_EXIST_INPUT", {"new_path": new_path}) in YES:
             utils.rmtree(new_path)
@@ -42,7 +42,6 @@ def continue_actions(new_path):
     locales.adv_print("MOVING_DEFAULT_SETTINGS")
     utils.migrate_default_settings(f"{folder_name}/", f"{new_path}/settings/CFGS/default_migration.cfg")
     os.chdir(new_path)
-    return new_path
 
 
 def delete_folder(new_path):

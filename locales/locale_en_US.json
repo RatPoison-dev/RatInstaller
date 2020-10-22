@@ -1,6 +1,9 @@
 {
     "YES": ["y", "yes"],
     "YES_OR_NO": "[Y/N]",
+    "JDK_ZIP_ALREADY_EXISTS": "!zipfile already exists. Extracting.",
+    "RETRY_BUILD_INPUT": "Build failed. Would you like to have installer download JDK for you and try again?",
+    "KEY_WAS_FORCE_SET": "Hashmap key !key was force set to !value.",
     "FILE_IS_MISSING": "!file is missing. Downloading.",
     "CONNECTING_TO_GITHUB": "Connecting to GitHub servers...",
     "TEMP_FOLDER_EXIT": "Installer has detected itself running in temp folder.\n Please unpack cheat first, then run the installer once again from the unpacked folder.",

@@ -1,14 +1,12 @@
 import requests
 from datetime import datetime
-import locales
 import utils
 import os
 import settingsTools
 from pathlib import Path
 
-settings = settingsTools.load_settings()
-
-locales = locales.Locales()
+settings = settingsTools.settings
+locales = settingsTools.locales
 
 
 class Version(object):

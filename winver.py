@@ -1,10 +1,10 @@
 import re
-import locales
+import settingsTools
 import sys
 
 WIN_10 = (10, 0, 0)
 
-locales = locales.Locales()
+locales = settingsTools.locales
 
 
 def get_win_ver():

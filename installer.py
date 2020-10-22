@@ -1,13 +1,12 @@
 import atexit
-import locales
 import os
 import settingsTools
 import traceback
 import utils
 from whaaaaat import print_json
 
-settings = settingsTools.load_settings()
-locales = locales.Locales()
+settings = settingsTools.settings
+locales = settingsTools.locales
 
 can_continue = True
 if os.environ["TEMP"] in os.getcwd():
@@ -25,10 +24,10 @@ if can_continue:
     try:
         import main
     except BaseException:
-        print("Some exception occured, please report in discord (https://discord.gg/xkTteTM):")
+        print("Some exception occurred, please report in discord (https://discord.gg/xkTteTM):")
         print("----CUT HERE----")
         print("Installer settings:")
-        print_json(settings.dict)
+        print_json(settings.content)
         traceback.print_exc()
         utils.kill_jdk()
 

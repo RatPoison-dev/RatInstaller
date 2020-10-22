@@ -1,13 +1,13 @@
 from pathlib import Path
-import locales
 import os
 import subprocess
 import utils
 import repository
 import settingsTools
+import jdk_tools
 
-locales = locales.Locales()
-settings = settingsTools.load_settings()
+locales = settingsTools.locales
+settings = settingsTools.settings
 
 repo = repository.Repository(settings['github_repo'])
 
@@ -17,22 +17,30 @@ def compile():
         version = repository.Version.get_version_file()
         repo.compare_tree(version.branch) if version.commit_hash is None else repo.compare_tree(version.commit_hash)
     locales.adv_print("BUILDING")
-    subprocess.check_call(["gradlew.bat", "RatPoison"])
-    delete_libs_folder()
+    process = subprocess.Popen(["gradlew.bat", "RatPoison"])
+    return_code = process.wait()
     utils.kill_jdk()
-    bat_file = utils.get_bat_name()
-    for path in utils.search_file("java.exe"):
-        if utils.verify_path(str(path)):
-            java_exe = str(path)
-            with open(bat_file, "r") as rFile:
-                prev_lines = rFile.readlines()
-            prev_lines[4] = prev_lines[4].replace("java", f"\"{java_exe}\"", 1)
-            with open(bat_file, "w") as wFile:
-                wFile.writelines(prev_lines)
-            break
-    if locales.adv_input("RANDOMIZE_FILE_NAMES_INPUT") in locales.yes:
-        randomize_file_names()
-    replace_bat_path()
+    if return_code == 0:
+        delete_libs_folder()
+        bat_file = utils.get_bat_name()
+        for path in utils.search_file("java.exe"):
+            if utils.verify_path(str(path)):
+                java_exe = str(path)
+                with open(bat_file, "r") as rFile:
+                    prev_lines = rFile.readlines()
+                prev_lines[4] = prev_lines[4].replace("java", f"\"{java_exe}\"", 1)
+                with open(bat_file, "w") as wFile:
+                    wFile.writelines(prev_lines)
+                break
+        if locales.adv_input("RANDOMIZE_FILE_NAMES_INPUT") in locales.yes:
+            randomize_file_names()
+        replace_bat_path()
+    else:
+        if locales.adv_input("RETRY_BUILD_INPUT"):
+            settings["skip_jdk_checks"] = False
+            settings["force_install_jdk"] = True
+            jdk_tools.download_jdk()
+            compile()
 
 
 def delete_libs_folder():

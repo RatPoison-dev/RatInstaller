@@ -9,15 +9,12 @@ import urllib.request
 import zipfile
 import struct
 from pathlib import Path
-
 import requests
 from tqdm import tqdm
-
-import locales
 import settingsTools
 
-settings = settingsTools.load_settings()
-locales = locales.Locales()
+settings = settingsTools.settings
+locales = settingsTools.locales
 
 
 def get_build_state():
@@ -96,11 +93,11 @@ def migrate_default_settings(folder, save_path):
 def migrate_folder(folder, new_folder):
     for f in os.listdir(folder):
         prev_path = f"{folder}/{f}"
-        nwpath = f"{new_folder}/{f}"
+        new_path = f"{new_folder}/{f}"
         if os.path.isfile(prev_path):
-            if os.path.exists(nwpath):
-                os.remove(nwpath)
-            shutil.move(prev_path, nwpath)
+            if os.path.exists(new_path):
+                os.remove(new_path)
+            shutil.move(prev_path, new_path)
 
 
 class DownloadProgressBar(tqdm):
@@ -110,10 +107,14 @@ class DownloadProgressBar(tqdm):
         self.update(b * bsize - self.n)
 
 
-def download_file_and_extract(url, output_path, size=None):
-    download_file_with_bar(url, output_path, size)
+def extract_file(output_path):
     with zipfile.ZipFile(output_path) as zip_ref:
         zip_ref.extractall("")
+
+
+def download_file_and_extract(url, output_path, size=None):
+    download_file_with_bar(url, output_path, size)
+    extract_file(output_path)
     os.remove(output_path)
 
 
@@ -122,7 +123,8 @@ def download_file_with_bar(url, output_path, size=None):
     with DownloadProgressBar(unit='B', unit_scale=True,
                              miniters=1, desc=url.split('/')[-1], ascii=True) as t:
         urllib.request.urlretrieve(url, filename=output_path, reporthook=lambda b, bsize, tsize: t.update_to(b, bsize,
-                                                                                                             size) if size is not None else t.update_to(b, bsize, tsize))
+                                                                                                             size) if size is not None else t.update_to(
+            b, bsize, tsize))
 
 
 # https://stackoverflow.com/questions/4829043/how-to-remove-read-only-attrib-directory-with-python-in-windows
@@ -149,7 +151,8 @@ def parse_jdk_version(path):
 
 def verify_path(path):
     return "jre" not in path.lower() and parse_jdk_version(path) is not None and parse_jdk_version(
-        path) >= 12 and "$RECYCLE.BIN" not in path
+        path) >= 12 and "$RECYCLE.BIN" not in path and os.path.exists(os.path.join(path, "bin")) and (
+                       not "adoptopenjdk" in path.lower() or not is_x64())
 
 
 def get_random_name():
