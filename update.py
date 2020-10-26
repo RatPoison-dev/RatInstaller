@@ -1,7 +1,6 @@
 import os
 import shutil
 import __main__
-import locales
 import repository
 import settingsTools
 import utils

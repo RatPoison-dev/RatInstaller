@@ -69,7 +69,7 @@ else:
                     run_continue_update_loop(generated_folder_path)
             elif not settings["force_cheat_compile"]:
                 utils.ask_start_cheat()
-        elif not builded or settings["force_cheat_compile"]:
+        if not builded or settings["force_cheat_compile"]:
             compile_tools.compile()
             utils.ask_start_cheat()
     else:

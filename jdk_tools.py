@@ -2,6 +2,7 @@ import os
 import settingsTools
 import utils
 import zipfile
+from pathlib import Path
 
 settings = settingsTools.settings
 
@@ -23,7 +24,7 @@ def search_jdk():
             return True
     jdk = os.environ.get("JAVA_HOME")
     # why tf your jdk points to recycle bin bitch are you retarted
-    return settings["skip_jdk_checks"] or (jdk is not None and utils.verify_path(jdk))
+    return settings["skip_jdk_checks"] or (jdk is not None and utils.verify_path(Path(jdk)))
 
 def extend_path():
     utils.set_java_home("jdk-14.0.2")

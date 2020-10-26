@@ -24,7 +24,7 @@ def compile():
         delete_libs_folder()
         bat_file = utils.get_bat_name()
         for path in utils.search_file("java.exe"):
-            if utils.verify_path(str(path)):
+            if utils.verify_path(path):
                 java_exe = str(path)
                 with open(bat_file, "r") as rFile:
                     prev_lines = rFile.readlines()

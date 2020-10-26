@@ -149,10 +149,11 @@ def parse_jdk_version(path):
         return None
 
 
-def verify_path(path):
-    return "jre" not in path.lower() and parse_jdk_version(path) is not None and parse_jdk_version(
-        path) >= 12 and "$RECYCLE.BIN" not in path and os.path.exists(os.path.join(path, "bin")) and (
-                       not "adoptopenjdk" in path.lower() or not is_x64())
+def verify_path(path: Path):
+    strPath = str(path)
+    return path.exists() and "jre" not in strPath.lower() and parse_jdk_version(strPath) is not None and parse_jdk_version(
+        strPath) >= 12 and "$RECYCLE.BIN" not in strPath and ((path.is_dir() and os.path.exists(os.path.join(path, "bin"))) or not path.is_dir()) and (
+                    "adoptopenjdk" not in strPath.lower() or not is_x64())
 
 
 def get_random_name():
@@ -164,7 +165,7 @@ def get_random_name():
 
 def search_file(file):
     path_to_search = os.environ["JAVA_HOME"] if os.environ.get("JAVA_HOME") is not None and verify_path(
-        os.environ["JAVA_HOME"]) else os.path.splitdrive(os.getcwd())[0] + "/"
+        Path(os.environ["JAVA_HOME"])) else os.path.splitdrive(os.getcwd())[0] + "/"
     return Path(path_to_search).rglob(file)
 
 
@@ -186,7 +187,7 @@ def kill_jdk():
 
 
 def set_java_home(path):
-    os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
+    os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path, "bin")
 
 
 def is_x64():
