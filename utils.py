@@ -187,7 +187,7 @@ def kill_jdk():
 
 
 def set_java_home(path):
-    os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path, "bin")
+    os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
 
 
 def is_x64():
