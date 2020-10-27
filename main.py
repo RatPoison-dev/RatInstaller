@@ -1,21 +1,21 @@
 import __main__
 import argparse
-import compile_tools
-import jdk_tools
 import os
 import subprocess
-import update
-import utils
 import whaaaaat
 import winver
 import repository
 import settingsTools
+import compile_tools
+import jdk_tools
+import utils
+import update
 
 YES = settingsTools.locales.yes
 locales = settingsTools.locales
 settings = settingsTools.settings
 winver.detect_win()
-executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
+executing = utils.get_main()
 repo = repository.Repository(settings['github_repo'])
 
 parser = argparse.ArgumentParser()
@@ -39,12 +39,7 @@ def run_continue_update_loop(folder_path):
 if args.cd == "True":
     run_continue_update_loop(args.path)
 else:
-    if jdk_tools.jdk_zip_exists():
-        locales.adv_print(f"JDK_ZIP_ALREADY_EXISTS", variables={"zipfile": settings["jdk_zip_name"]})
-        utils.extract_file(settings["jdk_zip_name"])
-        os.remove(settings["jdk_zip_name"])
-        jdk_tools.extend_path()
-    elif not jdk_tools.search_jdk() or settings["force_install_jdk"]:
+    if not jdk_tools.search_jdk() or settings["force_install_jdk"]:
         jdk_tools.download_jdk()
     # Update checks only when the
     if installed := utils.get_installed_state():

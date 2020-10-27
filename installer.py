@@ -9,7 +9,7 @@ settings = settingsTools.settings
 locales = settingsTools.locales
 
 can_continue = True
-if os.environ["TEMP"] in os.getcwd():
+if utils.is_running_from_zip():
     locales.adv_print("TEMP_FOLDER_EXIT")
     can_continue = False
 

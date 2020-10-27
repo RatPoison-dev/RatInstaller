@@ -1,13 +1,12 @@
 import os
 import shutil
-import __main__
 import repository
 import settingsTools
 import utils
 
 settings = settingsTools.settings
 locales = settingsTools.locales
-executing = os.path.splitext(os.path.basename(__main__.__file__))[0]
+executing = utils.get_main()
 
 YES = locales.yes
 

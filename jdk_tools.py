@@ -18,6 +18,10 @@ def jdk_zip_exists():
     return False
 
 def search_jdk():
+    if jdk_zip_exists():
+        locales.adv_print(f"JDK_ZIP_ALREADY_EXISTS", variables={"zipfile": settings["jdk_zip_name"]})
+        utils.extract_file(settings["jdk_zip_name"])
+        os.remove(settings["jdk_zip_name"])
     for file in os.listdir():
         if "jdk" in file and not os.path.isfile(os.path.join(".", file)):
             utils.set_java_home(file)

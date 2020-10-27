@@ -12,16 +12,24 @@ from pathlib import Path
 import requests
 from tqdm import tqdm
 import settingsTools
+import __main__
 
 settings = settingsTools.settings
 locales = settingsTools.locales
 
+
+def get_main():
+    return os.path.splitext(os.path.basename(__main__.__file__))[0]
 
 def get_build_state():
     if (folder_name := get_folder_name()) is None: return False
     for _ in Path(folder_name).rglob("*.bat"):
         return True
     return False
+
+def is_running_from_zip():
+    tmp_list = [os.path.splitext(os.path.basename(x))[0] for x in os.listdir() if os.path.isfile(x)]
+    return os.environ["TEMP"] in os.getcwd() or get_main() not in tmp_list
 
 
 def get_installed_state():
