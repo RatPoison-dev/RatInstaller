@@ -1,5 +1,5 @@
-1.7
-new-testing
+1.8
+beta
 
 // Version.txt structure:
 // version

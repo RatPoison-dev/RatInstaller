@@ -10,11 +10,16 @@ locales = settingsTools.locales
 
 
 def jdk_zip_exists():
-    if os.path.exists(settings["jdk_zip_name"]):
-        with zipfile.ZipFile(settings["jdk_zip_name"]) as zip_ref:
-            file_list = [x.filename for x in zip_ref.filelist]
-            if "jdk-14.0.2/bin/" in file_list or "jdk-14.0.2+12/bin" in file_list:
-                return True
+    zip_name = settings["jdk_zip_name"]
+    if os.path.exists(zip_name):
+        try:
+            with zipfile.ZipFile(zip_name) as zip_ref:
+                file_list = [x.filename for x in zip_ref.filelist]
+                if "jdk-14.0.2/bin/" in file_list or "jdk-14.0.2+12/bin" in file_list:
+                    return True
+        except zipfile.BadZipFile:
+            os.remove(zip_name)
+            return False
     return False
 
 def search_jdk():
