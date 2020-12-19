@@ -194,6 +194,11 @@ def kill_jdk():
         pass
 
 
+
+def mkdirs(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
 def set_java_home(path):
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)
 

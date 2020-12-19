@@ -10,7 +10,6 @@ import compile_tools
 import jdk_tools
 import utils
 import update
-
 YES = settingsTools.locales.yes
 locales = settingsTools.locales
 settings = settingsTools.settings
@@ -35,6 +34,15 @@ def run_continue_update_loop(folder_path):
     version_file.write_commit_hash(repo.get_latest_commit_hash(version_file.branch))
     utils.ask_start_cheat()
 
+
+try:
+    process = subprocess.Popen("git diff --name-only", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) # remove output and errors
+    process.wait()
+    if process.returncode == 0:
+        settings.setKey("download_missing_files", False, False)
+        print("Downloading missing files disabled due to developer mode. Enjoy ;)")
+except:
+    pass
 
 if args.cd == "True":
     run_continue_update_loop(args.path)

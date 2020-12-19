@@ -2,6 +2,9 @@ import os
 import settingsTools
 import utils
 import zipfile
+import tkinter
+import tkinter.filedialog
+import shutil
 from pathlib import Path
 
 settings = settingsTools.settings
@@ -35,8 +38,8 @@ def search_jdk():
     # why tf your jdk points to recycle bin bitch are you retarted
     return settings["skip_jdk_checks"] or (jdk is not None and utils.verify_path(Path(jdk)))
 
-def extend_path():
-    utils.set_java_home("jdk-14.0.2")
+def extend_path(pov):
+    utils.set_java_home(pov)
     os.environ["PATH"] = os.environ["PATH"] + ";" + os.path.join(os.environ["JAVA_HOME"], "bin")
 
 
@@ -47,5 +50,12 @@ def download_jdk():
         jdk_zip_name = settings["jdk_zip_name"]
         utils.download_file_and_extract(jdk_link, jdk_zip_name)
         os.rename("jdk-14.0.2+12", "jdk-14.0.2") if os.path.exists("jdk-14.0.2+12") else None
+        tk = tkinter.Tk()
+        default_directory = "C:/Program Files/jdk-14.0.2"
+        utils.mkdirs(default_directory)
+        directory = tkinter.filedialog.askdirectory(title="Where to save your JDK?", initialdir=default_directory)
+        utils.mkdirs(directory)
+        tk.withdraw()
+        shutil.move("jdk-14.0.2", directory)
         # Set JAVA_HOME and PATH
-        extend_path()
+        extend_path(directory)

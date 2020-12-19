@@ -92,7 +92,13 @@ class NetworkedDict(object):
         with open(self.path, "w") as fw:
             json.dump(self.content, fw, indent=4)
         locales.adv_print(f"KEY_WAS_FORCE_SET", variables={"key": key, "value": value})
-        
+    
+    def setKey(self, key, value, printMessage=True):
+        self.content[key] = value
+        with open(self.path, "w") as fw:
+            json.dump(self.content, fw, indent=4)
+        if (printMessage): locales.adv_print(f"KEY_WAS_FORCE_SET", variables={"key": key, "value": value})
+        pass
 
     def __init__(self, path: typing.AnyStr, url: typing.AnyStr, default_dict: typing.Dict):
         """

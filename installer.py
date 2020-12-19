@@ -24,7 +24,7 @@ if can_continue:
     try:
         import main
     except BaseException:
-        print("Some exception occurred, please report in discord (https://discord.gg/xkTteTM):")
+        print("Some exception occurred, please report in discord (https://dimden.dev/ratpoisonowns):")
         print("----CUT HERE----")
         print("Installer settings:")
         print_json(settings.content)
