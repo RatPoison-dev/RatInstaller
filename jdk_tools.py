@@ -31,11 +31,14 @@ def search_jdk():
         utils.extract_file(settings["jdk_zip_name"])
         os.remove(settings["jdk_zip_name"])
     for file in os.listdir():
-        if "jdk" in file and not os.path.isfile(os.path.join(".", file)):
-            utils.set_java_home(file)
+        jdk_path = os.path.join(os.getcwd(), file)
+        if "jdk" in file and not os.path.isfile(jdk_path) and utils.verify_path(Path(jdk_path)):
+            extend_path(jdk_path)
             return True
     for file in utils.listdir(settings["jdk_installation_path"]):
-        if "jdk" in file and not os.path.isfile(os.path.join(".", file)):
+        jdk_path = os.path.join(settings["jdk_installation_path"], file)
+        if "jdk" in file and os.path.isdir(jdk_path) and utils.verify_path(Path(jdk_path)):
+            extend_path(os.path.join(settings["jdk_installation_path"], file))
             utils.set_java_home(os.path.join(settings["jdk_installation_path"], file))
             return True
     jdk = os.environ.get("JAVA_HOME")
