@@ -51,11 +51,11 @@ def download_jdk():
         utils.download_file_and_extract(jdk_link, jdk_zip_name)
         os.rename("jdk-14.0.2+12", "jdk-14.0.2") if os.path.exists("jdk-14.0.2+12") else None
         tk = tkinter.Tk()
-        default_directory = "C:/Program Files/jdk-14.0.2"
+        default_directory = "C:/Program Files/"
         utils.mkdirs(default_directory)
         directory = tkinter.filedialog.askdirectory(title="Where to save your JDK?", initialdir=default_directory)
         utils.mkdirs(directory)
         tk.withdraw()
         shutil.move("jdk-14.0.2", directory)
         # Set JAVA_HOME and PATH
-        extend_path(directory)
+        extend_path(os.path.join(directory, "jdk-14.0.2"))
