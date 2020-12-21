@@ -193,7 +193,8 @@ def kill_jdk():
         # Nah
         pass
 
-
+def listdir(path):
+    return os.listdir(path) if os.path.exists(path) else []
 
 def mkdirs(path):
     if not os.path.exists(path):

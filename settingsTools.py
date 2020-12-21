@@ -18,6 +18,7 @@ DEFAULT_SETTINGS = {
     "bypass_download": False,
     "skip_jdk_checks": False,
     "show_last_X_commits": 5,
+    "jdk_installation_path": "C:/Program Files/",
     "jdk_link_x64": "https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0"
                     ".2_windows-x64_bin.zip",
     "jdk_link_x86": "https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.2%2B12/OpenJDK14U"
@@ -87,13 +88,13 @@ class NetworkedDict(object):
         else:
             raise KeyError(f"Key {key} was not found in any object.")
     
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: typing.Any, value: typing.Any):
         self.content[key] = value
         with open(self.path, "w") as fw:
             json.dump(self.content, fw, indent=4)
         locales.adv_print(f"KEY_WAS_FORCE_SET", variables={"key": key, "value": value})
     
-    def setKey(self, key, value, printMessage=True):
+    def setKey(self, key: typing.Any, value: typing.Any, printMessage=True):
         self.content[key] = value
         with open(self.path, "w") as fw:
             json.dump(self.content, fw, indent=4)

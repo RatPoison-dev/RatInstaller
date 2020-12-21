@@ -34,6 +34,10 @@ def search_jdk():
         if "jdk" in file and not os.path.isfile(os.path.join(".", file)):
             utils.set_java_home(file)
             return True
+    for file in utils.listdir(settings["jdk_installation_path"]):
+        if "jdk" in file and not os.path.isfile(os.path.join(".", file)):
+            utils.set_java_home(os.path.join(settings["jdk_installation_path"], file))
+            return True
     jdk = os.environ.get("JAVA_HOME")
     # why tf your jdk points to recycle bin bitch are you retarted
     return settings["skip_jdk_checks"] or (jdk is not None and utils.verify_path(Path(jdk)))
@@ -56,6 +60,7 @@ def download_jdk():
         directory = tkinter.filedialog.askdirectory(title="Where to save your JDK?", initialdir=default_directory)
         utils.mkdirs(directory)
         tk.withdraw()
+        settings.setKey("jdk_installation_path", directory, False)
         shutil.move("jdk-14.0.2", directory)
         # Set JAVA_HOME and PATH
         extend_path(os.path.join(directory, "jdk-14.0.2"))
