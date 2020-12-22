@@ -64,6 +64,8 @@ def download_jdk():
         utils.mkdirs(directory)
         tk.withdraw()
         settings.setKey("jdk_installation_path", directory, False)
+        new_directory = os.path.join(directory, "jdk-14.0.2")
+        if os.path.exists(new_directory): shutil.rmtree(new_directory)
         shutil.move("jdk-14.0.2", directory)
         # Set JAVA_HOME and PATH
         extend_path(os.path.join(directory, "jdk-14.0.2"))
