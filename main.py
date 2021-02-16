@@ -37,7 +37,7 @@ def run_continue_update_loop(folder_path):
 
 try:
     process = subprocess.Popen("git diff --name-only", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) # remove output and errors
-    process.wait()
+    process.communicate()
     if process.returncode == 0:
         settings.setKey("download_missing_files", False, False)
         print("Downloading missing files disabled due to developer mode. Enjoy ;)")

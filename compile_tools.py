@@ -18,7 +18,8 @@ def compile():
         repo.compare_tree(version.branch) if version.commit_hash is None else repo.compare_tree(version.commit_hash)
     locales.adv_print("BUILDING")
     process = subprocess.Popen(["gradlew.bat", "RatPoison"])
-    return_code = process.wait()
+    process.communicate()
+    return_code = process.returncode
     utils.kill_jdk()
     if return_code == 0:
         delete_libs_folder()
