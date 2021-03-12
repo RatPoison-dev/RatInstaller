@@ -91,12 +91,20 @@ else:
             raw_branch = answers.get('branch')
             commit_hash = branches[raw_branch]["sha"]
             branch = raw_branch.split()[0]
-            version = repo.get_version(branch).version
+            version = repo.get_version(branch)
+            if version is None: 
+                locales.adv_print("FETCH_VERSION_FAILED")
+                os.system("pause")
+                os._exit(0)
+            version = version.version
             new_dir = f"{repo.repository_name} {version}"
             locales.adv_print("CLONING_INTO", variables={"new_dir": new_dir})
             repo.clone(branch)
             os.chdir(new_dir)
             repository.Version.get_version_file().write_commit_hash(commit_hash)
-            if os.path.exists(f"{executing}.exe"):
+            if os.path.exists(f"{executing}.bat"):
+                subprocess.check_call(f"{executing}.bat")
+                os._exit(0)
+            elif os.path.exists(f"{executing}.exe"):
                 subprocess.check_call(f"{executing}.exe")
                 os._exit(0)

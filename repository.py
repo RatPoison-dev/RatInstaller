@@ -60,7 +60,7 @@ class Repository(object):
         self.cache["tree"] = {}
         tmp_tree = {}
         request = requests.get(f"https://api.github.com/repos/{self.name}/git/trees/{branch}?recursive=true")
-        if request.status_code != 404:
+        if request.status_code == 200:
             r = request.json()
             self.__verify_request(r)
             for i in r["tree"]:
@@ -122,12 +122,12 @@ class Repository(object):
 
     def get_version(self, branch):
         request = requests.get(f"https://raw.githubusercontent.com/{self.name}/{branch}/version.txt")
-        return Version(request.text) if request.status_code != 404 else None
+        return Version(request.text) if request.status_code == 200 else None
 
     def get_latest_commit_hash(self, branch):
         if (cacheres := self.get_cache("branches", branch)) is None:
             request = requests.get(f"https://api.github.com/repos/{self.name}/branches/{branch}")
-            if request.status_code != 404:
+            if request.status_code == 200:
                 r = request.json()
                 self.__verify_request(r)
                 return r["commit"]["sha"]

@@ -25,5 +25,6 @@
     "BUILDING": "Building RatPoison...",
     "RANDOMIZE_FILE_NAMES_INPUT": "Would you like to randomize the file name for safety?",
     "START_CHEAT_INPUT": "Do you want to start the cheat?",
-    "OUTDATED_WINVER_WARNING": "[WARNING] Your operating system is not officially supported by RatPoison. You could experience various bugs that will never be fixed. Proceed with caution."
+    "OUTDATED_WINVER_WARNING": "[WARNING] Your operating system is not officially supported by RatPoison. You could experience various bugs that will never be fixed. Proceed with caution.",
+    "FETCH_VERSION_FAILED": "Failed to fetch branch. Exiting..."
 }

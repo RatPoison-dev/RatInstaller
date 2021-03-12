@@ -57,7 +57,8 @@ DEFAULT_LOCALES = {
     "RANDOMIZE_FILE_NAMES_INPUT": "Would you like to randomize the file name for safety?",
     "START_CHEAT_INPUT": "Do you want to start the cheat?",
     "OUTDATED_WINVER_WARNING": "[WARNING] Your operating system is not officially supported by RatPoison. You could "
-                               "experience various bugs that will never be fixed. Proceed with caution. "
+                               "experience various bugs that will never be fixed. Proceed with caution. ",
+    "FETCH_VERSION_FAILED": "Failed to fetch branch. Exiting..."
 }
 
 
@@ -65,7 +66,7 @@ class NetworkedDict(object):
     def make_request(self, should_return="none"):
         try:
             request = requests.get(self.url)
-            return None if request.status_code == 404 else request.json()
+            return (None if should_return == "none" else {}) if request.status_code != 200 else request.json()
         except (json.JSONDecodeError, requests.ConnectTimeout, requests.exceptions.ConnectionError, urllib.error.URLError):
             return None if should_return == "none" else {}
 
@@ -86,7 +87,7 @@ class NetworkedDict(object):
         elif (tmp_key := self.default_dict.get(key)) is not None:
             return tmp_key
         else:
-            raise KeyError(f"Key {key} was not found in any object.")
+            return f"NetworkedDict: Failed to find {key}"
     
     def __setitem__(self, key: typing.Any, value: typing.Any):
         self.content[key] = value
