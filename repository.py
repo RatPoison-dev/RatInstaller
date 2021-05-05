@@ -85,7 +85,7 @@ class Repository(object):
             for file, i in tree.items():
                 if not os.path.exists(file):
                     if i["type"] == "tree":
-                        os.makedirs(file)
+                        utils.mkdirs(file)
                     else:
                         locales.adv_print("FILE_IS_MISSING", variables={"file": file})
                         utils.download_file_with_bar(self.get_download_url(branch, file), file)

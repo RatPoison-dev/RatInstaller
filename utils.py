@@ -198,7 +198,12 @@ def listdir(path):
 
 def mkdirs(path):
     if not os.path.exists(path):
-        os.makedirs(path)
+        try:
+            os.makedirs(path)
+            return True
+        except PermissionError:
+            return False
+    return True
 
 def set_java_home(path):
     os.environ["JAVA_HOME"] = os.path.join(os.getcwd(), path)

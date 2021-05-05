@@ -58,14 +58,22 @@ def download_jdk():
         utils.download_file_and_extract(jdk_link, jdk_zip_name)
         os.rename("jdk-14.0.2+12", "jdk-14.0.2") if os.path.exists("jdk-14.0.2+12") else None
         tk = tkinter.Tk()
-        default_directory = "C:/Program Files/"
-        utils.mkdirs(default_directory)
+        tk.title("RatPoison Builder")
+        default_directory = os.environ.get("ProgramFiles") if os.environ.get("ProgramFiles") is not None else os.getcwd()
+        created = utils.mkdirs(default_directory)
+        if not created:
+            default_directory = os.getcwd()
         directory = tkinter.filedialog.askdirectory(title="Where to save your JDK?", initialdir=default_directory)
-        utils.mkdirs(directory)
+        created = utils.mkdirs(directory)
+        if not created:
+            directory = os.getcwd() # failed to create directory, can't do much here
         tk.withdraw()
         settings.setKey("jdk_installation_path", directory, False)
         new_directory = os.path.join(directory, "jdk-14.0.2")
         if os.path.exists(new_directory): shutil.rmtree(new_directory)
-        shutil.move("jdk-14.0.2", directory)
+        try:
+            shutil.move("jdk-14.0.2", directory)
+        except:
+            directory = os.getcwd()
         # Set JAVA_HOME and PATH
         extend_path(os.path.join(directory, "jdk-14.0.2"))
