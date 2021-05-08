@@ -69,4 +69,4 @@ Settings are located in ``installerSettings.json`` file
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@retart1337](https://github.com/retart1337) - Main author
+- [@SPRAVEDLIVO](https://github.com/SPRAVEDLIVO) - Main author
