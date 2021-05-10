@@ -5,6 +5,7 @@ import utils
 import repository
 import settingsTools
 import jdk_tools
+import requests
 
 locales = settingsTools.locales
 settings = settingsTools.settings
@@ -17,6 +18,9 @@ def compile():
         version = repository.Version.get_version_file()
         repo.compare_tree(version.branch) if version.commit_hash is None else repo.compare_tree(version.commit_hash)
     locales.adv_print("BUILDING")
+    if not os.path.exists("gradlew.bat"):
+        with open("gradlew.bat", "w") as f:
+            f.write(requests.get("https://raw.githubusercontent.com/michel-kraemer/gradle-download-task/master/gradlew.bat").text)
     process = subprocess.Popen(["gradlew.bat", "RatPoison"])
     process.communicate()
     return_code = process.returncode
