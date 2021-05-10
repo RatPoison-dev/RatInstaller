@@ -18,7 +18,7 @@ DEFAULT_SETTINGS = {
     "bypass_download": False,
     "skip_jdk_checks": False,
     "show_last_X_commits": 5,
-    "jdk_installation_path": "C:/Program Files/",
+    "jdk_installation_path": "%APPDATA",
     "jdk_link_x64": "https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0"
                     ".2_windows-x64_bin.zip",
     "jdk_link_x86": "https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.2%2B12/OpenJDK14U"

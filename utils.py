@@ -17,6 +17,16 @@ import __main__
 settings = settingsTools.settings
 locales = settingsTools.locales
 
+class _Path(object):
+    def __init__(self, value):
+        if value.startswith("%"):
+            env = os.environ.get(value[1:-1])
+            self.value = env if env is not None else os.getcwd()
+        else:
+            self.value = env
+    def listdir(self):
+        return os.listdir(self.value) if os.path.exists(self.value) else []
+
 
 def get_main():
     return os.path.splitext(os.path.basename(__main__.__file__))[0]
@@ -115,15 +125,20 @@ class DownloadProgressBar(tqdm):
         self.update(b * bsize - self.n)
 
 
-def extract_file(output_path):
-    with zipfile.ZipFile(output_path) as zip_ref:
-        zip_ref.extractall("")
+def extract_file(output_path) -> bool:
+    try:
+        with zipfile.ZipFile(output_path) as zip_ref:
+            zip_ref.extractall("")
+        return True
+    except:
+        return False
 
 
-def download_file_and_extract(url, output_path, size=None):
-    download_file_with_bar(url, output_path, size)
-    extract_file(output_path)
+def download_file_and_extract(url, output_path, size=None) -> bool:
+    download_file_with_bar(url, output_path, size)  
+    boolean = extract_file(output_path)
     os.remove(output_path)
+    return boolean
 
 
 # https://stackoverflow.com/questions/15644964/python-progress-bar-and-downloads

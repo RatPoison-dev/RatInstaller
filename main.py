@@ -34,23 +34,32 @@ def run_continue_update_loop(folder_path):
     version_file.write_commit_hash(repo.get_latest_commit_hash(version_file.branch))
     utils.ask_start_cheat()
 
+using_correct_repo = True
 
 try:
-    process = subprocess.Popen("git diff --name-only", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) # remove output and errors
-    process.communicate()
+    process = subprocess.Popen("git diff --name-only", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, encoding = "UTF-8")
+    out, err = process.communicate()
     if process.returncode == 0:
-        settings.setKey("download_missing_files", False, False)
-        print("Downloading missing files disabled due to developer mode. Enjoy ;)")
-except:
+        # git is available & has changes
+        if len([x for x in out.split("\n") if x]) > 0:
+            p = subprocess.Popen("git config --get remote.origin.url", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, encoding = "UTF-8")
+            out2, _ = p.communicate()
+            # editing ratpoison repository
+            if out2.endswith(f"{repo.repository_name}.git\n"):
+                settings.setKey("download_missing_files", False, False)
+                print("Downloading missing files disabled due to developer mode. Enjoy ;)")
+            else:
+                using_correct_repo = False
+except: 
     pass
 
 if args.cd == "True":
     run_continue_update_loop(args.path)
 else:
-    if not jdk_tools.search_jdk() or settings["force_install_jdk"]:
+    if not jdk_tools.search_jdk() or settings["force_install_jdk"] or True:
         jdk_tools.download_jdk()
     # Update checks only when the
-    if installed := utils.get_installed_state():
+    if using_correct_repo and (installed := utils.get_installed_state()):
         if builded := utils.get_build_state():
             shouldUpdate, origin_branch = update.should_update()
             if shouldUpdate:
