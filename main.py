@@ -1,5 +1,4 @@
 import __main__
-import argparse
 import os
 import subprocess
 import whaaaaat
@@ -10,20 +9,14 @@ import compile_tools
 import jdk_tools
 import utils
 import update
+import sys
 YES = settingsTools.locales.yes
 locales = settingsTools.locales
 settings = settingsTools.settings
 winver.detect_win()
 executing = utils.get_main()
 repo = repository.Repository(settings['github_repo'])
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--cd", default="False",
-                    help="Installer's variable to communicate with spawned installer after update. Don't edit manually.")
-parser.add_argument("--path", default=None,
-                    help="Installer's variable to communicate with spawned installer after update. Don't edit manually.")
-args = parser.parse_args()
-
+args = sys.argv[1:]
 
 def run_continue_update_loop(folder_path):
     update.continue_actions(folder_path)
@@ -53,8 +46,11 @@ try:
 except: 
     pass
 
-if args.cd == "True":
-    run_continue_update_loop(args.path)
+CD = args[0] if len(args) > 0 else "False"
+PATH = args[1] if len(args) > 1 else ""
+
+if CD == "True":
+    run_continue_update_loop(PATH)
 else:
     if not jdk_tools.search_jdk() or settings["force_install_jdk"] or True:
         jdk_tools.download_jdk()
@@ -74,8 +70,9 @@ else:
                     if generated_folder_path == "":
                         raise Exception("RatPoison folder was not found")
                 if settings["update_type"] == "call_installer":
+                    call = f"{generated_folder_path}/{executing}.exe" if os.path.exists(f"{generated_folder_path}/{executing}.exe") else f"{generated_folder_path}/{executing}.bat"
                     subprocess.check_call(
-                        f"{generated_folder_path}/{executing}.exe --cd=True --path=\"{generated_folder_path}\"")
+                        f"{call} True \"{generated_folder_path}\"")
                     os._exit(0)
                 else:
                     run_continue_update_loop(generated_folder_path)
