@@ -23,7 +23,7 @@ class _Path(object):
             env = os.environ.get(value[1:-1])
             self.value = env if env is not None else os.getcwd()
         else:
-            self.value = env
+            self.value = value
     def listdir(self):
         return os.listdir(self.value) if os.path.exists(self.value) else []
 
