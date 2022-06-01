@@ -13,7 +13,7 @@ DEFAULT_SETTINGS = {
     "update_type": "call_installer",
     "build_folder": "build/",
     "jdk_zip_name": "JDK.zip",
-    "github_repo": "TheRatCode/RatPoison",
+    "github_repo": "RatPoison-dev/RatPoison",
     "settings_directory": "settings/",
     "bypass_download": False,
     "skip_jdk_checks": False,
